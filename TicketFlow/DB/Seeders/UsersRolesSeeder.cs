@@ -15,7 +15,7 @@ public static class UsersRolesSeeder
             if(!roleManager.Roles.Any())
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
-                await roleManager.CreateAsync(new IdentityRole("User"));
+                await roleManager.CreateAsync(new IdentityRole("Staff"));
             }
 
             if (!userManager.Users.Any())
