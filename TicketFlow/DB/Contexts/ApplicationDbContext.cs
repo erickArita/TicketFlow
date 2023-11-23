@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TicketFlow.Entities;
 
 namespace TicketFlow.DB.Contexts;
 
@@ -24,8 +25,39 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         builder.Entity<IdentityRoleClaim<string>>().ToTable("roles_claims");
         builder.Entity<IdentityUserToken<string>>().ToTable("users_tokens");
         
-        // para afectar la propiedad de la tabla de books y que sea unica
+        builder.Entity<ArchivoRespuesta>()
+            .HasKey(ec => new { ec.ArchivoAdjuntoId, ec.RespuestaId });
+
+        builder.Entity<ArchivoRespuesta>()
+            .HasOne(ec => ec.ArchivoAdjunto)
+            .WithMany(e => e.ArchivosRespuestas)
+            .HasForeignKey(ec => ec.ArchivoAdjuntoId);
+
+        builder.Entity<ArchivoRespuesta>()
+            .HasOne(ec => ec.Respuesta)
+            .WithMany(c => c.ArchivoRespuestas)
+            .HasForeignKey(ec => ec.RespuestaId);
         
+        builder.Entity<ArchivoTicket>()
+            .HasKey(ec => new { ec.ArchivoAdjuntoId, ec.TicketId });
+
+        builder.Entity<ArchivoTicket>()
+            .HasOne(ec => ec.ArchivoAdjunto)
+            .WithMany(e => e.ArchivosTickets)
+            .HasForeignKey(ec => ec.ArchivoAdjuntoId);
+
+        builder.Entity<ArchivoTicket>()
+            .HasOne(ec => ec.Ticket)
+            .WithMany(c => c.ArchivosTickets)
+            .HasForeignKey(ec => ec.TicketId);
     }
     
+    public DbSet<ArchivoAdjunto> ArchivosAdjuntos { get; set; }
+    public DbSet<Cliente> Clientes { get; set; }
+    public DbSet<Estado> Estados { get; set; }
+    public DbSet<Prioridad> Prioridades { get; set; }
+    public DbSet<Respuesta> Respuestas { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<ArchivoTicket> ArchivosTickets { get; set; }
+    public DbSet<ArchivoRespuesta> ArchivosRespuestas { get; set; }
 }
