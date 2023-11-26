@@ -1,4 +1,4 @@
-﻿namespace TicketFlow.Services;
+﻿namespace TicketFlow.Services.Email;
 
 public interface IEmailSenderService
 {

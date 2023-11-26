@@ -82,6 +82,8 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
+appsettings.Development.json
+
 # End of https://www.toptal.com/developers/gitignore/api/rider
 /obj/Debug/net7.0/.NETCoreApp,Version=v7.0.AssemblyAttributes.cs
 /obj/project.assets.json
