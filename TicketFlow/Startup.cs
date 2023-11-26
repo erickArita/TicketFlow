@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TicketFlow.DB.Contexts;
+using TicketFlow.Services;
 
 namespace TicketFlow;
 
@@ -29,6 +30,7 @@ public class Startup
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
         });
 
+        services.AddTransient<IEmailSenderService, EmailSenderService>();
         services.AddAutoMapper(typeof(Startup));
         services.AddHttpContextAccessor();
         
