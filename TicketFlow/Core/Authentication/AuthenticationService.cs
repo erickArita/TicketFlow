@@ -65,7 +65,8 @@ public class AuthenticationService : IAuthenticationService
             "Bienvenido a TicketFlow");
 
         var token = await GenerateAccessToken(user);
-
+        await _emailSenderService.SendEmailAsync(registerRequest.Email, "Bienvenido a TicketFlow",
+            "Bienvenido a TicketFlow");
         return token;
     }
 
@@ -87,6 +88,9 @@ public class AuthenticationService : IAuthenticationService
 
         var token = await GenerateAccessToken(user);
 
+        var emailBody =
+            $"Se ha iniciado sesión en su cuenta con el usuario ¿Esto no has sido tú? <a href='#'>Haz clic aquí</a> para cambiar tu contraseña";
+        await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", emailBody);
         return token;
     }
 
