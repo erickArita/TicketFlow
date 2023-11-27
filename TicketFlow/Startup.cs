@@ -12,7 +12,7 @@ namespace TicketFlow;
 
 public class Startup
 {
-    private static bool _isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
+    private bool _isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -31,6 +31,12 @@ public class Startup
             ? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
             : Configuration.GetConnectionString("DefaultConnection");
 
+        var variables = Environment.GetEnvironmentVariables();
+
+        foreach (var key in variables.Keys)
+        {
+            Console.WriteLine(key + " " + variables[key]);
+        }
 
         //Add DbContext
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
