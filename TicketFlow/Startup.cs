@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TicketFlow.Core;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Services.Email;
 
@@ -115,6 +116,7 @@ public class Startup
                 }
             });
         });
+        services.ConfigureCore();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
