@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace TicketFlow.Common.Utils;
 
 public class TicketFlowException : Exception
@@ -8,4 +10,6 @@ public class TicketFlowException : Exception
     {
         Errors = new[] { error };
     }
+
+    public override string Message { get => string.Join(", ", Errors); }
 }

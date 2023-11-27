@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -31,7 +32,7 @@ public class AuthenticationService : IAuthenticationService
         _emailSenderService = emailSenderService;
     }
 
-    public async Task<string> Register(RegisterRequest registerRequest)
+    public async Task<string> RegisterAsync(RegisterRequest registerRequest)
     {
         var existUser = await _userManager.FindByEmailAsync(registerRequest.Email);
         var existUserName = await _userManager.FindByNameAsync(registerRequest.UserName);
@@ -56,7 +57,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (!result.Succeeded)
         {
-            throw new TicketFlowException($"Error al crear el usuario {registerRequest.UserName}");
+            throw new ValidationException(result.Errors.First().Description);
         }
 
         await _userManager.AddToRoleAsync(user, "User");
@@ -68,7 +69,7 @@ public class AuthenticationService : IAuthenticationService
         return token;
     }
 
-    public async Task<string> Login(LoginRequest loginRequest)
+    public async Task<string> LoginAsync(LoginRequest loginRequest)
     {
         var user = await _userManager.FindByNameAsync(loginRequest.UserName);
 
