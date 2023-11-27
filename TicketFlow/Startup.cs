@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TicketFlow.Core;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Services.Email;
 
@@ -13,6 +14,7 @@ namespace TicketFlow;
 public class Startup
 {
     private static bool _isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -25,7 +27,7 @@ public class Startup
         services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler
             = ReferenceHandler
                 .IgnoreCycles); // para solucionar el error de entra en bucle el sql porque hay una relacion de muchos a muchos
- 
+
 
         string defaultConnection = _isProduction
             ? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
@@ -35,13 +37,16 @@ public class Startup
         //Add DbContext
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
 
+
         services.AddTransient<IEmailSenderService, EmailSenderService>();
+
         services.AddAutoMapper(typeof(Startup));
         services.AddHttpContextAccessor();
 
         //Add Identity
         services.AddIdentity<IdentityUser, IdentityRole>(options => { options.SignIn.RequireConfirmedAccount = false; })
             .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
 
         //Add Authentication Jwt
         services.AddAuthentication(options =>
@@ -109,6 +114,8 @@ public class Startup
                 }
             });
         });
+
+        services.ConfigureCore();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -126,7 +133,6 @@ public class Startup
         app.UseResponseCaching();
 
         app.UseCors("CorsRule");
-
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
