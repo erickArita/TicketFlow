@@ -14,7 +14,7 @@ public class EmailSenderService : IEmailSenderService
         _config = configuration.GetSection("EmailConfiguration").Get<EmailConfigurationDto>();
     }
 
-    public async Task SendEmailAsync(string email, string subjet, string message)
+    public async Task<bool> SendEmailAsync(string email, string subjet, string message)
     {
         var emailMessage = new MimeMessage();
         emailMessage.From.Add(new MailboxAddress(_config.FromName, _config.FromAddress));
@@ -32,5 +32,7 @@ public class EmailSenderService : IEmailSenderService
             await client.SendAsync(emailMessage);
             await client.DisconnectAsync(true);
         } //es un using para que se desconecte del servidor
+
+        return true;
     }
 }

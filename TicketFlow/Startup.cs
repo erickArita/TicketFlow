@@ -54,8 +54,8 @@ public class Startup
             {
                 ValidateIssuer = true, //valida el emisor
                 ValidateAudience = true, //valida el receptor
-                //ValidateLifetime = true,//valida el tiempo de vida
-                //ValidateIssuerSigningKey = true,//valida la firma
+                ValidateLifetime = true,//valida el tiempo de vida
+                ValidateIssuerSigningKey = true,//valida la firma
                 ValidIssuer = Configuration["JWT:ValidIssuer"], //el emisor debe ser el mismo que el del token
                 ValidAudience = Configuration["JWT:ValidAudience"], //el receptor debe ser el mismo que el del token
                 IssuerSigningKey =
