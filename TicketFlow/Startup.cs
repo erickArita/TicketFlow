@@ -12,6 +12,7 @@ namespace TicketFlow;
 
 public class Startup
 {
+    private static bool _isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -24,12 +25,15 @@ public class Startup
         services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler
             = ReferenceHandler
                 .IgnoreCycles); // para solucionar el error de entra en bucle el sql porque hay una relacion de muchos a muchos
+ 
+
+        string defaultConnection = _isProduction
+            ? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
+            : Configuration.GetConnectionString("DefaultConnection");
+
 
         //Add DbContext
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-        });
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
 
         services.AddTransient<IEmailSenderService, EmailSenderService>();
         services.AddAutoMapper(typeof(Startup));
@@ -54,8 +58,8 @@ public class Startup
             {
                 ValidateIssuer = true, //valida el emisor
                 ValidateAudience = true, //valida el receptor
-                ValidateLifetime = true,//valida el tiempo de vida
-                ValidateIssuerSigningKey = true,//valida la firma
+                ValidateLifetime = true, //valida el tiempo de vida
+                ValidateIssuerSigningKey = true, //valida la firma
                 ValidIssuer = Configuration["JWT:ValidIssuer"], //el emisor debe ser el mismo que el del token
                 ValidAudience = Configuration["JWT:ValidAudience"], //el receptor debe ser el mismo que el del token
                 IssuerSigningKey =
