@@ -1,20 +1,20 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
-using TicketFlow.Dtos;
+using TicketFlow.Services.Email.Dtos;
 
-namespace TicketFlow.Services;
+namespace TicketFlow.Services.Email;
 
 public class EmailSenderService : IEmailSenderService
 {
     private readonly EmailConfigurationDto _config;
-    
+
     public EmailSenderService(IConfiguration configuration)
     {
         _config = configuration.GetSection("EmailConfiguration").Get<EmailConfigurationDto>();
     }
 
-    public async Task SendEmailAsync(string email, string subjet, string message)
+    public async Task<bool> SendEmailAsync(string email, string subjet, string message)
     {
         var emailMessage = new MimeMessage();
         emailMessage.From.Add(new MailboxAddress(_config.FromName, _config.FromAddress));
@@ -31,6 +31,8 @@ public class EmailSenderService : IEmailSenderService
             await client.AuthenticateAsync(_config.SmtpUsername, _config.SmtpPassword);
             await client.SendAsync(emailMessage);
             await client.DisconnectAsync(true);
-        }//es un using para que se desconecte del servidor
+        } //es un using para que se desconecte del servidor
+
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace TicketFlow.Dtos;
+﻿namespace TicketFlow.Services.Email.Dtos;
 
 public class EmailConfigurationDto
 {
