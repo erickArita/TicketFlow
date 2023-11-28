@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using TicketFlow.Common.Exceptions;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Dtos;
 using TicketFlow.Services.Email;
@@ -57,7 +58,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (!result.Succeeded)
         {
-            throw new ValidationException(result.Errors.First().Description);
+            throw new TicketFlowException(result.Errors.First().Description);
         }
 
         await _userManager.AddToRoleAsync(user, "User");
@@ -76,14 +77,14 @@ public class AuthenticationService : IAuthenticationService
 
         if (user == null)
         {
-            throw new TicketFlowException($"El usuario con nombre {loginRequest.UserName} no existe");
+            throw new TicketFlowException($"El usuario con nombre {loginRequest.UserName} no existe  🔑❌😡");
         }
 
         var result = await _signInManager.PasswordSignInAsync(user, loginRequest.Password, false, false);
 
         if (!result.Succeeded)
         {
-            throw new TicketFlowException($"Error al iniciar sesión con el usuario {loginRequest.UserName}");
+            throw new TicketFlowException($"Error al iniciar sesión con el usuario {loginRequest.UserName} 🔑❌😡");
         }
 
         var token = await GenerateAccessToken(user);
@@ -100,7 +101,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (user == null)
         {
-            throw new TicketFlowException($"El usuario con email {email} no existe");
+            throw new TicketFlowException($"El usuario con email {email} no existe 🔑❌😡");
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -116,11 +117,17 @@ public class AuthenticationService : IAuthenticationService
         var user = await _userManager.FindByEmailAsync(resetPasswordRequest.Email);
         if (user == null)
         {
-            throw new TicketFlowException($"El usuario con email {resetPasswordRequest.Email} no existe");
+            throw new TicketFlowException($"El usuario con email {resetPasswordRequest.Email} no existe 🔑❌😡");
         }
 
         var result =
             await _userManager.ResetPasswordAsync(user, resetPasswordRequest.Token, resetPasswordRequest.Password);
+
+        if (!result.Succeeded)
+        {
+            throw new TicketFlowException(result.Errors);
+        }
+
         return result.Succeeded;
     }
 

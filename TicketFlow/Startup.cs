@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TicketFlow.Core;
 using TicketFlow.DB.Contexts;
+using TicketFlow.Middlewares;
 using TicketFlow.Services.Email;
 
 namespace TicketFlow;
@@ -14,6 +15,7 @@ namespace TicketFlow;
 public class Startup
 {
     private bool _isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -26,7 +28,7 @@ public class Startup
         services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler
             = ReferenceHandler
                 .IgnoreCycles); // para solucionar el error de entra en bucle el sql porque hay una relacion de muchos a muchos
- 
+
 
         string defaultConnection = _isProduction
             ? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
@@ -34,17 +36,12 @@ public class Startup
 
         var variables = Environment.GetEnvironmentVariables();
 
-        foreach (var key in variables.Keys)
-        {
-            Console.WriteLine(key + " " + variables[key]);
-        }
 
         //Add DbContext
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
 
         services.AddTransient<IEmailSenderService, EmailSenderService>();
         services.AddAutoMapper(typeof(Startup));
-        services.AddHttpContextAccessor();
 
         //Add Identity
         services.AddIdentity<IdentityUser, IdentityRole>(options => { options.SignIn.RequireConfirmedAccount = false; })
@@ -117,6 +114,8 @@ public class Startup
             });
         });
         services.ConfigureCore();
+        services.AddHttpContextAccessor();
+
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -126,6 +125,7 @@ public class Startup
         app.UseSwagger();
         app.UseSwaggerUI();
         //}
+        app.UseMiddleware<ErrorHandlerMiddlerware>();
 
         app.UseHttpsRedirection();
 
@@ -135,6 +135,7 @@ public class Startup
 
         app.UseCors("CorsRule");
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
