@@ -14,6 +14,7 @@ namespace TicketFlow;
 public class Startup
 {
     private bool _isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -26,7 +27,7 @@ public class Startup
         services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler
             = ReferenceHandler
                 .IgnoreCycles); // para solucionar el error de entra en bucle el sql porque hay una relacion de muchos a muchos
- 
+
 
         string defaultConnection = _isProduction
             ? Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
@@ -134,7 +135,8 @@ public class Startup
         app.UseResponseCaching();
 
         app.UseCors("CorsRule");
-
+        
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
