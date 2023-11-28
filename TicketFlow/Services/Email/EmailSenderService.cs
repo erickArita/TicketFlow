@@ -17,8 +17,8 @@ public class EmailSenderService : IEmailSenderService
         {
             _isDevelopment = true;
         }
-     }
-
+    }
+    
     public async Task<bool> SendEmailAsync(string email, string subjet, string message)
     {
         email = _isDevelopment ? _config.FromAddress : email;

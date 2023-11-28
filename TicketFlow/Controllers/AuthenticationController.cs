@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Authentication;
 using TicketFlow.Core.Dtos;
@@ -34,23 +33,12 @@ public class AuthenticationController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequestApiModel)
     {
-        try
-        {
-            string token = await _authenticationService.RegisterAsync(registerRequestApiModel);
+        string token = await _authenticationService.RegisterAsync(registerRequestApiModel);
 
-            return Ok(new AplicationResponse<string>
-            {
-                Message = "Registro exitoso",
-                Data = token
-            });
-        }
-        catch (TicketFlowException e)
+        return Ok(new AplicationResponse<string>
         {
-            return BadRequest(new AplicationResponse<string>
-            {
-                Status = false,
-                Message = e.Message
-            });
-        }
+            Message = "Registro exitoso",
+            Data = token
+        });
     }
 }
