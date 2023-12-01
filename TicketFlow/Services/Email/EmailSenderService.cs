@@ -18,8 +18,8 @@ public class EmailSenderService : IEmailSenderService
             _isDevelopment = true;
         }
     }
-    
-    public async Task<bool> SendEmailAsync(string email, string subjet, string message)
+
+    public async Task<bool> SendEmailAsync(string email, string subjet, string template)
     {
         email = _isDevelopment ? _config.FromAddress : email;
         var emailMessage = new MimeMessage();
@@ -28,7 +28,7 @@ public class EmailSenderService : IEmailSenderService
         emailMessage.Subject = subjet;
 
         var bodyBuilder = new BodyBuilder();
-        bodyBuilder.HtmlBody = message;
+        bodyBuilder.HtmlBody = template;
         emailMessage.Body = bodyBuilder.ToMessageBody();
 
         using (var client = new SmtpClient())
