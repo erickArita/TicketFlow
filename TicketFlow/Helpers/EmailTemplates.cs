@@ -20,14 +20,14 @@ public class EmailTemplates
         return CreateTemplate(titulo, descripcion);
     }
     
-    public static string ResetPasswordTemplate(string email, string token)
+    public static string ResetPasswordTemplate(string titulo, string descripcion)
     {
-        return template;
+        return CreateTemplate(titulo, descripcion);
     }
     
-    public static string ChangePasswordTemplate(string email)
+    public static string ChangePasswordTemplate(string titulo, string descripcion)
     {
-        return template;
+        return CreateTemplate(titulo, descripcion);
     }
 
     private static string CreateTemplate(string titulo, string descripcion)
