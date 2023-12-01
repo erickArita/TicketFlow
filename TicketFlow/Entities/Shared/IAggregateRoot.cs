@@ -1,6 +1,6 @@
 ﻿namespace TicketFlow.Entities;
 
-public abstract class AggregateRoot
+public interface IAggregateRoot
 {
     public DateTime FechaCreacion { get; set; }
     public string CreadoPor { get; set; }
