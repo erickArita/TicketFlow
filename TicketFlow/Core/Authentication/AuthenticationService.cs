@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Dtos;
+using TicketFlow.Helpers;
 using TicketFlow.Services.Email;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -87,10 +88,8 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var token = await GenerateAccessToken(user);
-
-        var emailBody =
-            $"Se ha iniciado sesión en su cuenta con el usuario ¿Esto no has sido tú? <a href='#'>Haz clic aquí</a> para cambiar tu contraseña";
-        await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", emailBody);
+        
+        await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", EmailTemplates.LoginTemplate());
         return token;
     }
 
@@ -108,7 +107,9 @@ public class AuthenticationService : IAuthenticationService
         var resetPasswordUrl = $"{backendUrl}/reset-password?token={token}&email={email}";
         var emailBody =
             $"Para restablecer su contraseña, haga clic en el siguiente enlace: <a href='{resetPasswordUrl}'>Restablecer contraseña</a>";
-        return await _emailSenderService.SendEmailAsync(email, "Restablecer contraseña", emailBody);
+        
+        return await _emailSenderService.SendEmailAsync(user.Email, "Autenticacion", EmailTemplates.ResetPasswordTemplate("Cambiar contraseña", emailBody));
+        
     }
 
     public async Task<bool> ResetPassword(ResetPasswordRequest resetPasswordRequest)
