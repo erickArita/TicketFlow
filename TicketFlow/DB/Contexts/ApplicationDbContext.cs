@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<ArchivoTicket> ArchivosTickets { get; set; }
     public DbSet<ArchivoRespuesta> ArchivosRespuestas { get; set; }
+    public DbSet<TiketsHistory> TiketsHistory { get; set; }
 
 
     public ApplicationDbContext(DbContextOptions options, IHttpContextAccessor accessor) : base(options)
