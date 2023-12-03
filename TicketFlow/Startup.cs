@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -40,7 +41,7 @@ public class Startup
         //Add DbContext
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
 
-        services.AddTransient<IEmailSenderService, MailgunEmailService>();
+        services.AddTransient<IEmailSenderService, EmailSenderSmtp>();
         services.AddAutoMapper(typeof(Startup));
         services.AddControllersWithViews();
 
@@ -116,6 +117,7 @@ public class Startup
         });
         services.ConfigureCore();
         services.AddHttpContextAccessor();
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthorizationHandlerMiddleware>();
 
     }
 
