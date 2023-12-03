@@ -47,4 +47,18 @@ public class UsersController : ControllerBase
             Data = null
         });
     }
+    
+    //endpoint para cambiar contraseña como admin
+    [HttpPatch]
+    [Route("changePasswordAsAmin")]
+    public async Task<IActionResult> ChangePasswordAsAdmin([FromBody] ChangePasswordAsAdminRequest changePasswordAsAdminRequest)
+    {
+        await _userService.ChangePasswordAsAdminAsync(changePasswordAsAdminRequest);
+
+        return Ok(new AplicationResponse<string>
+        {
+            Message = "Contraseña actualizada correctamente",
+            Data = null
+        });
+    }
 }

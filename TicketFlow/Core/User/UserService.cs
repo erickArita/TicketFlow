@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using TicketFlow.Common.Exceptions;
 using TicketFlow.Core.Dtos;
+using TicketFlow.Helpers;
+using TicketFlow.Services.Email;
 
 namespace TicketFlow.Core.User;
 
@@ -10,16 +12,19 @@ public class UserService : IUserService
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IEmailSenderService _emailSenderService;
 
     public UserService(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager
+        RoleManager<IdentityRole> roleManager,
+        IEmailSenderService emailSenderService
     )
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _roleManager = roleManager;
+        _emailSenderService = emailSenderService;
     }
 
     //metodo para que actualice el rol de un usuario
@@ -68,5 +73,28 @@ public class UserService : IUserService
         }
 
         return usersRoleResponse;
+    }
+    
+    //metodo para cambiar contrasena con admin
+    public async Task ChangePasswordAsAdminAsync(ChangePasswordAsAdminRequest changePasswordAsAdminRequest)
+    {
+        var user = await _userManager.FindByIdAsync(changePasswordAsAdminRequest.TargetUserId);
+        if (user == null)
+        {
+            throw new TicketFlowException($"El usuario con id {changePasswordAsAdminRequest.TargetUserId} no existe ❌😡");
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, changePasswordAsAdminRequest.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            throw new TicketFlowException("Error al cambiar la contraseña");
+        }
+        
+        var emailBody = "Su contraseña ha sido cambiada correctamente";
+
+        await _emailSenderService.SendEmailAsync(user.Email, "Cambio de contraseña",
+            EmailTemplates.ChangePasswordTemplate("Cambio de contraseña", emailBody));
     }
 }
