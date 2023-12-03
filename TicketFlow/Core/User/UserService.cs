@@ -9,12 +9,12 @@ public class UserService : IUserService
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityUser> _roleManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public UserService(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        RoleManager<IdentityUser> roleManager
+        RoleManager<IdentityRole> roleManager
     )
     {
         _signInManager = signInManager;
@@ -30,12 +30,7 @@ public class UserService : IUserService
         {
             throw new TicketFlowException($"El usuario con id {updateRoleRequest.UserId} no existe ❌😡");
         }
-
-        /*var role = await _userManager.GetRolesAsync(user);
-        if (!role.Contains(updateRoleRequest.RoleName))
-        {
-            throw new TicketFlowException($"El usuario con id {updateRoleRequest.UserId} no tiene el rol {updateRoleRequest.RoleName}");
-        }*/
+        
         //verrificar que el rol exista
         var existRole = await _roleManager.FindByNameAsync(updateRoleRequest.NewRoleName);
         if (existRole == null)
