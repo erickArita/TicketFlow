@@ -5,7 +5,8 @@ public class EmailTemplates
     private static string OtenerPlantillaHtml()
     {
         var path = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", "BaseTemplate.html");
-        return File.ReadAllText(path);
+        var archivo = File.ReadAllText(path);
+        return archivo;
     }
     
     public static string LoginTemplate()
@@ -32,7 +33,10 @@ public class EmailTemplates
 
     private static string CreateTemplate(string titulo, string descripcion)
     {
+        var logo =
+            "https://firebasestorage.googleapis.com/v0/b/repertorioapp-1f2c6.appspot.com/o/logo.png?alt=media&token=ede8746f-c49f-4986-a857-6f86e106b53d";
         var template = OtenerPlantillaHtml();
+        template = template.Replace("{{Logo}}", logo);
         template = template.Replace("{{Titulo}}", titulo);
         template = template.Replace("{{Descripcion}}", descripcion);
         template = template.Replace("{{Fecha}}", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
