@@ -34,7 +34,7 @@ public class EmailTemplates
     private static string CreateTemplate(string titulo, string descripcion)
     {
         var logo =
-            "https://firebasestorage.googleapis.com/v0/b/repertorioapp-1f2c6.appspot.com/o/logo.jpg?alt=media&token=afc76ae6-7f0b-4122-848c-634a0df67e0e";
+            "https://firebasestorage.googleapis.com/v0/b/repertorioapp-1f2c6.appspot.com/o/logo.png?alt=media&token=ede8746f-c49f-4986-a857-6f86e106b53d";
         var template = OtenerPlantillaHtml();
         template = template.Replace("{{Logo}}", logo);
         template = template.Replace("{{Titulo}}", titulo);
