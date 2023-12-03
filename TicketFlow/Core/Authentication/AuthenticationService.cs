@@ -91,7 +91,7 @@ public class AuthenticationService : IAuthenticationService
 
         var token = await GenerateAccessToken(user);
 
-        //await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", EmailTemplates.LoginTemplate());
+        await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", "Se ha iniciado sesión correctamente");
         return token;
     }
 
