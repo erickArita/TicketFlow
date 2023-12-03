@@ -2,5 +2,5 @@
 
 public interface IEmailSenderService
 {
-    Task<bool> SendEmailAsync(string email, string subjet, string template);
+    Task<bool> SendEmailAsync(string email, string subject, string template);
 }

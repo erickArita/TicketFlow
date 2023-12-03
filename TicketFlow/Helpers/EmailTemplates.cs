@@ -5,7 +5,8 @@ public class EmailTemplates
     private static string OtenerPlantillaHtml()
     {
         var path = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", "BaseTemplate.html");
-        return File.ReadAllText(path);
+        var archivo = File.ReadAllText(path);
+        return archivo;
     }
     
     public static string LoginTemplate()

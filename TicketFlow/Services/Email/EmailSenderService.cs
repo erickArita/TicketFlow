@@ -1,6 +1,6 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
+﻿using SendGrid;
+using SendGrid.Helpers.Mail;
+using TicketFlow.Common.Exceptions;
 using TicketFlow.Services.Email.Dtos;
 
 namespace TicketFlow.Services.Email;
@@ -19,26 +19,27 @@ public class EmailSenderService : IEmailSenderService
         }
     }
 
-    public async Task<bool> SendEmailAsync(string email, string subjet, string template)
+    public async Task<bool> SendEmailAsync(string email, string subject, string template)
     {
-        email = _isDevelopment ? _config.FromAddress : email;
-        var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress(_config.FromName, _config.FromAddress));
-        emailMessage.To.Add(new MailboxAddress("", email));
-        emailMessage.Subject = subjet;
+        var emailTo = _isDevelopment ? _config.From : email;
+        
+        var apikey = _config.ApiKey;
+        var emailFrom = _config.From;
+        var nombre = _config.Nombre;
 
-        var bodyBuilder = new BodyBuilder();
-        bodyBuilder.HtmlBody = template;
-        emailMessage.Body = bodyBuilder.ToMessageBody();
+        var cliente = new SendGridClient(apikey);
+        var from = new EmailAddress(emailFrom, nombre);
+        var to = new EmailAddress(emailTo, nombre);
+        var contenidoHtml = template;
 
-        using (var client = new SmtpClient())
+        var singleEmail = MailHelper.CreateSingleEmail(from, to, subject, "Hola", contenidoHtml);
+        var respuesta = await cliente.SendEmailAsync(singleEmail);
+        
+        if (!respuesta.IsSuccessStatusCode)
         {
-            await client.ConnectAsync(_config.SmtpServer, _config.SmtpPort, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(_config.SmtpUsername, _config.SmtpPassword);
-            await client.SendAsync(emailMessage);
-            await client.DisconnectAsync(true);
-        } //es un using para que se desconecte del servidor
-
+            throw new TicketFlowException("Error al enviar el email");
+        }
+        
         return true;
     }
 }
