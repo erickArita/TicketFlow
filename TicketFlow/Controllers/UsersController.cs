@@ -1,48 +1,50 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketFlow.Common.Utils;
+using TicketFlow.Core.Authentication;
+using TicketFlow.Core.Dtos;
 using TicketFlow.Core.User;
-using TicketFlow.Core.User.Dtos;
+using TicketFlow.Entities.Enums;
 
-namespace TicketFlow.Controllers
+namespace TicketFlow.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize(Roles = Roles.Admin)]
+public class UsersController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
-    {
-        private readonly IUserService _userService;
+    private readonly IUserService _userService;
 
-        public UsersController(IUserService userService)
+    public UsersController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    //endpoint para listar los usuarios con sus roles
+    [HttpGet]
+    [Route("getUsers")]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = await _userService.GetUsersAsync();
+
+        return Ok(new AplicationResponse<IEnumerable<UserRoleResponse>>
         {
-            _userService = userService;
-        }
-        //endpoint para obtener el rol de un usuario
-        [HttpGet]
-        [Route("getRole")]
-        public async Task<IActionResult> GetRole([FromBody] GetRoleRequest getRoleRequest)
+            Message = "Usuarios listados correctamente",
+            Data = users
+        });
+    }
+
+    //endpoint para actualizar el rol de un usuario
+    [HttpPost]
+    [Route("updateRole")]
+    public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleRequest updateRoleRequestApiModel)
+    {
+        await _userService.UpdateRoleAsync(updateRoleRequestApiModel);
+
+        return Ok(new AplicationResponse<string>
         {
-            var role = await _userService.GetRolesAsync();
-            return Ok(role);
-        }
-        
-        // endpoint para setear el rol de un usuario
-        [HttpPost]
-        [Route("setRole")]
-        public async Task<IActionResult> SetRole([FromBody] SetRoleRequest setRoleRequest)
-        {
-            await _userService.SetRoleAsync(setRoleRequest);
-            return Ok();
-        }
-        // endpoint para actualizar el rol de un usuario
-        [HttpPost]
-        [Route("updateRole")]
-        public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleRequest updateRoleRequest)
-        {
-            await _userService.UpdateRoleAsync(updateRoleRequest);
-            return Ok();
-        }
+            Message = "Rol actualizado correctamente",
+            Data = null
+        });
     }
 }

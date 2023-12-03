@@ -1,3 +1,3 @@
-﻿namespace TicketFlow.Core.User.Dtos;
+﻿namespace TicketFlow.Core.Dtos;
 
-public record SetRoleRequest(string UserId, string Role);
+public record SetRoleRequest(string UserId, string RoleName);
