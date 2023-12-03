@@ -43,4 +43,23 @@ public class AuthenticationController : ControllerBase
             Data = token
         });
     }
+    
+    [HttpPost]
+    [Route("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] string NewPassword, [FromQuery] string Email, [FromQuery] string Token)
+    {
+        var resetPasswordRequest = new ResetPasswordRequest
+        (
+            Email : Email,
+            Password : NewPassword,
+            Token : Token
+        );
+        await _authenticationService.ResetPassword(resetPasswordRequest);
+
+        return Ok(new AplicationResponse<string>
+        {
+            Message = "Cambio de contraseña exitoso 😎",
+            Data = null
+        });
+    }
 }
