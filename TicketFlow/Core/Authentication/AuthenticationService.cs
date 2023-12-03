@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TicketFlow.Common.Exceptions;
-using TicketFlow.Common.Utils;
+using TicketFlow.Core.Authentication.Dtos;
 using TicketFlow.Core.Dtos;
 using TicketFlow.Entities.Enums;
 using TicketFlow.Helpers;
@@ -95,7 +94,7 @@ public class AuthenticationService : IAuthenticationService
         return token;
     }
 
-    public async Task<bool> ResetPasswordEmail(string email)
+    public async Task<bool> ResetPasswordRequest(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -105,7 +104,9 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        
         var backendUrl = _config["WEBSITE_URL"];
+        
         var resetPasswordUrl = $"{backendUrl}/reset-password?token={token}&email={email}";
         var emailBody =
             $"Para restablecer su contraseña, haga clic en el siguiente enlace: <a href='{resetPasswordUrl}'>Restablecer contraseña</a>";
