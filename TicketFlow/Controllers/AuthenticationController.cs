@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Authentication;
 using TicketFlow.Core.Dtos;
