@@ -35,7 +35,7 @@ public class UsersController : ControllerBase
     }
 
     //endpoint para actualizar el rol de un usuario
-    [HttpPost]
+    [HttpPatch]
     [Route("updateRole")]
     public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleRequest updateRoleRequestApiModel)
     {
