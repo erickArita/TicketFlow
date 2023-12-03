@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Authentication;
+using TicketFlow.Core.Authentication.Dtos;
 using TicketFlow.Core.Dtos;
 using TicketFlow.Helpers;
 using TicketFlow.Services.Email;
@@ -43,4 +44,18 @@ public class AuthenticationController : ControllerBase
             Data = token
         });
     }
+    
+    [HttpPost]
+    [Route("reset-password-request")]
+    public async Task<IActionResult> ResetPasswordRequest([FromBody] string email)
+    {
+        
+        await _authenticationService.ResetPasswordRequest(email);
+
+        return Ok(new AplicationResponse<string>
+        {
+            Message = "Se ha enviado un correo para restablecer la contraseña"
+        });
+    }
+    
 }
