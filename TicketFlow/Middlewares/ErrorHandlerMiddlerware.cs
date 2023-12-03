@@ -34,9 +34,10 @@ public class ErrorHandlerMiddlerware
         switch (exception)
         {
             case TicketFlowException ticketFlowException:
-                logger.LogInformation(exception, "----------------------CONTAWEB ERROR TYPE---------------------");
+                logger.LogInformation(exception, "----------------------TicketFlow ERROR TYPE---------------------");
                 response.Errors = ticketFlowException.Errors ?? string.Empty;
                 response.StatusCode = HttpStatusCode.BadRequest;
+                response.Title = "----------------------TicketFlow ERROR TYPE---------------------";
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 break;
 
@@ -44,6 +45,8 @@ public class ErrorHandlerMiddlerware
                 logger.LogError(exception, "----------------------NOT FOUND ERROR TYPE---------------------");
                 response.Errors = notFoundException.Errors ?? string.Empty;
                 response.StatusCode = HttpStatusCode.NotFound;
+                response.Title = "----------------------NOT FOUND ERROR TYPE---------------------";
+
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 break;
 
@@ -51,11 +54,13 @@ public class ErrorHandlerMiddlerware
                 logger.LogInformation(exception, "----------------------AUTHENTICATION EXCEPTION---------------------");
                 response.Errors = unauthorizedException.Errors ?? string.Empty;
                 response.StatusCode = HttpStatusCode.Unauthorized;
+                response.Title = "----------------------AUTHENTICATION EXCEPTION---------------------";
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 break;
 
             case ForbiddenException forbiddenException:
                 logger.LogError(exception, "----------------------AUTHORIZATION EXCEPTION---------------------");
+                response.Title = "----------------------AUTHORIZATION EXCEPTION---------------------";
                 response.Errors = forbiddenException.Message ?? string.Empty;
                 response.StatusCode = HttpStatusCode.Unauthorized;
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
