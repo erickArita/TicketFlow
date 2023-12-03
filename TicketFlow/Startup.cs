@@ -40,7 +40,7 @@ public class Startup
         //Add DbContext
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
 
-        services.AddTransient<IEmailSenderService, EmailSenderService>();
+        services.AddTransient<IEmailSenderService, MailgunEmailService>();
         services.AddAutoMapper(typeof(Startup));
 
         //Add Identity

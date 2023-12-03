@@ -2,10 +2,8 @@
 
 public class EmailConfigurationDto
 {
-    public string SmtpServer { get; set; }
-    public int SmtpPort { get; set; }
-    public string SmtpUsername { get; set; }
-    public string SmtpPassword { get; set; }
-    public string FromName { get; set; }
-    public string FromAddress { get; set; }
+    public string ApiKey { get; set; }
+    public string From { get; set; }
+    public string Nombre { get; set; }
+    public string Domain { get; set; }
 }
