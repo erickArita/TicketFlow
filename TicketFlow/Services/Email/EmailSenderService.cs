@@ -19,10 +19,10 @@ public class EmailSenderService : IEmailSenderService
         }
     }
 
-    public async Task<bool> SendEmailAsync(string email, string subject, string template)
+    public async Task<bool> SendEmailAsync(string emailTo, string subject, string template)
     {
-        var emailTo = _isDevelopment ? _config.From : email;
-        
+        emailTo = _isDevelopment ? _config.From : emailTo;
+
         var apikey = _config.ApiKey;
         var emailFrom = _config.From;
         var nombre = _config.Nombre;
@@ -34,12 +34,12 @@ public class EmailSenderService : IEmailSenderService
 
         var singleEmail = MailHelper.CreateSingleEmail(from, to, subject, "Hola", contenidoHtml);
         var respuesta = await cliente.SendEmailAsync(singleEmail);
-        
+
         if (!respuesta.IsSuccessStatusCode)
         {
             throw new TicketFlowException("Error al enviar el email");
         }
-        
+
         return true;
     }
 }
