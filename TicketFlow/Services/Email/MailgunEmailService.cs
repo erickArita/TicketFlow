@@ -43,11 +43,6 @@ public class MailgunEmailService : IEmailSenderService
         request.AddParameter("html", template);
 
 
-        // var mainLogo = File.ReadAllBytes("wwwroot/images/mainLogo.png");
-
-        // request.AddFile("inline", mainLogo, "mainLogo.png");
-
-
         request.Method = Method.Post;
 
         return request;
@@ -63,7 +58,7 @@ public class MailgunEmailService : IEmailSenderService
             Authenticator = new HttpBasicAuthenticator("api", apiKey)
         });
 
-        var response = await client.ExecuteAsync<bool>(request);
+        var response = await client.ExecuteAsync(request);
 
         if (!response.IsSuccessful)
         {
