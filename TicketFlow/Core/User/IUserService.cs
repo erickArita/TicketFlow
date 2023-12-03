@@ -6,4 +6,5 @@ public interface IUserService
 {
     Task<bool> UpdateRoleAsync(UpdateRoleRequest updateRoleRequest);
     Task<List<UserRoleResponse>> GetUsersAsync();
+    Task ChangePasswordAsAdminAsync(ChangePasswordAsAdminRequest changePasswordAsAdminRequest);
 }
