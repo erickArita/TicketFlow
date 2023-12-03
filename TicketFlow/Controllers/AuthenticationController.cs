@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Authentication;
 using TicketFlow.Core.Authentication.Dtos;
 using TicketFlow.Core.Dtos;
-using TicketFlow.Helpers;
-using TicketFlow.Services.Email;
 
 namespace TicketFlow.Controllers;
 
@@ -17,6 +16,26 @@ public class AuthenticationController : ControllerBase
     public AuthenticationController(IAuthenticationService authenticationService)
     {
         _authenticationService = authenticationService;
+    }
+
+    [HttpPost]
+    [Route("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePassword request, [FromQuery] string Email,
+        [FromQuery] string Token)
+    {
+        var resetPasswordRequest = new ResetPasswordRequest
+        {
+            Email = Email,
+            Password = request.NewPassword,
+            Token = Token
+        };
+        await _authenticationService.ResetPassword(resetPasswordRequest);
+
+        return Ok(new AplicationResponse<string>
+        {
+            Message = "Cambio de contraseña exitoso 😎",
+            Data = null
+        });
     }
 
     [HttpPost]
@@ -49,13 +68,12 @@ public class AuthenticationController : ControllerBase
     [Route("reset-password-request")]
     public async Task<IActionResult> ResetPasswordRequest([FromBody] string email)
     {
-        
-        await _authenticationService.ResetPasswordRequest(email);
+        var token = await _authenticationService.ResetPasswordRequest(email);
 
         return Ok(new AplicationResponse<string>
         {
-            Message = "Se ha enviado un correo para restablecer la contraseña"
+            Message = "Se ha enviado un correo para restablecer la contraseña",
+            Data = token
         });
     }
-    
 }

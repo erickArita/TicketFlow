@@ -42,6 +42,7 @@ public class Startup
 
         services.AddTransient<IEmailSenderService, MailgunEmailService>();
         services.AddAutoMapper(typeof(Startup));
+        services.AddControllersWithViews();
 
         //Add Identity
         services.AddIdentity<IdentityUser, IdentityRole>(options => { options.SignIn.RequireConfirmedAccount = false; })

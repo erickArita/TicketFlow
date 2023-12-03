@@ -94,7 +94,7 @@ public class AuthenticationService : IAuthenticationService
         return token;
     }
 
-    public async Task<bool> ResetPasswordRequest(string email)
+    public async Task<string> ResetPasswordRequest(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -111,8 +111,10 @@ public class AuthenticationService : IAuthenticationService
         var emailBody =
             $"Para restablecer su contraseña, haga clic en el siguiente enlace: <a href='{resetPasswordUrl}'>Restablecer contraseña</a>";
 
-        return await _emailSenderService.SendEmailAsync(user.Email, "Autenticacion",
+        await _emailSenderService.SendEmailAsync(user.Email, "Autenticacion",
             EmailTemplates.ResetPasswordTemplate("Cambiar contraseña", emailBody));
+
+        return token;
     }
 
     public async Task<bool> ResetPassword(ResetPasswordRequest resetPasswordRequest)
