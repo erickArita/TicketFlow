@@ -10,7 +10,7 @@ public interface ICustomerService
 
     Task<IReadOnlyCollection<CustomerResponse>> GetAllAsync();
 
-    Task UpdateAsync(UpdateCustomerRequest updateCustomerRequest);
+    Task UpdateAsync(Guid id, UpdateCustomerRequest updateCustomerRequest);
 
     Task DeleteAsync(Guid id);
 }

@@ -29,6 +29,7 @@ try
 
     await UsersRolesSeeder.LoadDataAsync(userManager, roleManager, loggerFactory);
     await PrioridadesSeeder.SeedAsync(dataContext, loggerFactory);
+    await EstadosSeeder.SeedAsync(dataContext, loggerFactory);
 }
 catch (Exception e)
 {

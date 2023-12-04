@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketFlow.Common.Exceptions;
 using TicketFlow.Core.Prioridad.Dtos;
 using TicketFlow.DB.Contexts;
+using TicketFlow.Entities;
 
 namespace TicketFlow.Core.Prioridad;
 

@@ -48,9 +48,9 @@ public class CustomerService : ICustomerService
         return _mapper.Map<IReadOnlyCollection<CustomerResponse>>(customers);
     }
 
-    public async Task UpdateAsync(UpdateCustomerRequest updateCustomerRequest)
+    public async Task UpdateAsync(Guid id, UpdateCustomerRequest updateCustomerRequest)
     {
-        var customerEntity = await _context.Clientes.FirstOrDefaultAsync(x => x.Id == updateCustomerRequest.Id);
+        var customerEntity = await _context.Clientes.FirstOrDefaultAsync(x => x.Id == id);
 
         if (customerEntity == null)
         {
