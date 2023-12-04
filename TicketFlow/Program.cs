@@ -28,6 +28,7 @@ try
     var roleManager = service.GetRequiredService<RoleManager<IdentityRole>>();
 
     await UsersRolesSeeder.LoadDataAsync(userManager, roleManager, loggerFactory);
+    await PrioridadesSeeder.SeedAsync(dataContext, loggerFactory);
 }
 catch (Exception e)
 {
