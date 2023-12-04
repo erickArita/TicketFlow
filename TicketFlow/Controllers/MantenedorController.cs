@@ -47,8 +47,8 @@ public class MantenedorController : ControllerBase{
     private void addStudentToFirebase(Student student){
         client = new FireSharp.FirebaseClient(config);
         var data = student;
-        PushResponse response = client.Push("Students/", data);
+        PushResponse response = client.Push("Profesor/", data);
         data.student_id = response.Result.name;
-        SetResponse setResponse = client.Set("Students/"+data.student_id, data);
+        SetResponse esetRespons = client.Set("Profesor/"+data.student_id, data);
     }
 }
