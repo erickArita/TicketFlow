@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TicketFlow.Common.Exceptions;
-using TicketFlow.Common.Utils;
+using TicketFlow.Core.Authentication.Dtos;
 using TicketFlow.Core.Dtos;
+using TicketFlow.Entities.Enums;
+using TicketFlow.Helpers;
 using TicketFlow.Services.Email;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -61,13 +62,13 @@ public class AuthenticationService : IAuthenticationService
             throw new TicketFlowException(result.Errors.First().Description);
         }
 
-        await _userManager.AddToRoleAsync(user, "User");
-        await _emailSenderService.SendEmailAsync(registerRequest.Email, "Bienvenido a TicketFlow",
-            "Bienvenido a TicketFlow");
+        await _userManager.AddToRoleAsync(user, Roles.Staff);
 
         var token = await GenerateAccessToken(user);
-        await _emailSenderService.SendEmailAsync(registerRequest.Email, "Bienvenido a TicketFlow",
-            "Bienvenido a TicketFlow");
+
+        await _emailSenderService.SendEmailAsync(registerRequest.Email, "Registro",
+            EmailTemplates.RegisterTemplate("Bienvenido a TicketFlow", "Se ha registrado correctamente"));
+
         return token;
     }
 
@@ -89,13 +90,11 @@ public class AuthenticationService : IAuthenticationService
 
         var token = await GenerateAccessToken(user);
 
-        var emailBody =
-            $"Se ha iniciado sesión en su cuenta con el usuario ¿Esto no has sido tú? <a href='#'>Haz clic aquí</a> para cambiar tu contraseña";
-        await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", emailBody);
+        await _emailSenderService.SendEmailAsync(user.Email, "Inicio de sesión", EmailTemplates.LoginTemplate());
         return token;
     }
 
-    public async Task<bool> ResetPasswordEmail(string email)
+    public async Task<string> ResetPasswordRequest(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -105,11 +104,17 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        
         var backendUrl = _config["WEBSITE_URL"];
+        
         var resetPasswordUrl = $"{backendUrl}/reset-password?token={token}&email={email}";
         var emailBody =
             $"Para restablecer su contraseña, haga clic en el siguiente enlace: <a href='{resetPasswordUrl}'>Restablecer contraseña</a>";
-        return await _emailSenderService.SendEmailAsync(email, "Restablecer contraseña", emailBody);
+
+        await _emailSenderService.SendEmailAsync(user.Email, "Autenticacion",
+            EmailTemplates.ResetPasswordTemplate("Cambiar contraseña", emailBody));
+
+        return token;
     }
 
     public async Task<bool> ResetPassword(ResetPasswordRequest resetPasswordRequest)
@@ -127,6 +132,11 @@ public class AuthenticationService : IAuthenticationService
         {
             throw new TicketFlowException(result.Errors);
         }
+
+        var emailBody = "Su contraseña ha sido cambiada correctamente";
+
+        await _emailSenderService.SendEmailAsync(user.Email, "Cambio de contraseña",
+            EmailTemplates.ChangePasswordTemplate("Cambio de contraseña", emailBody));
 
         return result.Succeeded;
     }

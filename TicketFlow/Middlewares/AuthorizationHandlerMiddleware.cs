@@ -11,12 +11,12 @@ public class AuthorizationHandlerMiddleware : IAuthorizationMiddlewareResultHand
     {
         if (authorizeResult.Challenged)
         {
-            throw new UnauthorizedException("No se encuentra autenticado o el token es inválido ❌🔑👮🚨");
+            throw new UnauthorizedException("No se encuentra autenticado ❌🔑👮🚨 o el token es inválido 🧑‍🦽🧑‍‍🦯 ");
         }
 
         if (authorizeResult.Forbidden)
         {
-            throw new ForbiddenException("No tiene permisos para realizar esta acción ❌👮🚓🚨 ");
+            throw new ForbiddenException("No tiene el rol requerido para esta acción ❌👮🚓🚨 ");
         }
 
         return next(context);
