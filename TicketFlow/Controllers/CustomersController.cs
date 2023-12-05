@@ -60,7 +60,7 @@ public class CustomersController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<AplicationResponse<string>>> Put(Guid id, UpdateCustomerRequest createCustomer)
     {
-        await _customerService.UpdateAsync(createCustomer);
+        await _customerService.UpdateAsync(id, createCustomer);
 
         return Ok(
             new AplicationResponse<string>

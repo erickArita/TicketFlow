@@ -11,7 +11,7 @@ using TicketFlow.Core.Prioridad.Dtos;
 
 namespace TicketFlow.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PrioridadController : ControllerBase

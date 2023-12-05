@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TicketFlow.Core.Customer.Dtos;
+using TicketFlow.Core.Estado.Dtos;
 using TicketFlow.Core.Prioridad.Dtos;
 using TicketFlow.Entities;
 
@@ -11,6 +12,7 @@ public class AutoMapperProfiles : Profile
     {
         MapCustomer();
         MapPrioridad();
+        MapEstado();
     }
     
     private void MapCustomer()
@@ -23,5 +25,11 @@ public class AutoMapperProfiles : Profile
     {
         CreateMap<CreatePrioridadRequest, Prioridad>();
         CreateMap<Prioridad, PrioridadResponse>();
+    }
+    
+    private void MapEstado()
+    {
+        CreateMap<CreateEstadoRequest, Estado>();
+        CreateMap<Estado, EstadoResponse>();
     }
 }
