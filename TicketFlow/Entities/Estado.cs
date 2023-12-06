@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace TicketFlow.Entities;
 
 [Table("estados", Schema = "transacctional")]
 public class Estado : AggregateRoot
 {
-    [Column("id")]
-    public Guid Id { get; set; }
+    [Column("id")] public Guid Id { get; set; }
+
     [Column("descripcion")]
     [Required]
     [StringLength(30)]

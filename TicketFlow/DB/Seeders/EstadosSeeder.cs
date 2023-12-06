@@ -1,5 +1,6 @@
 ﻿using TicketFlow.DB.Contexts;
 using TicketFlow.Entities;
+using TicketFlow.Entities.Enums;
 
 namespace TicketFlow.DB.Seeders;
 
@@ -16,17 +17,17 @@ public static class EstadosSeeder
                     new Estado
                     {
                         Id = Guid.NewGuid(),
-                        Descripcion = "Nuevo"
+                        Descripcion = Estados.Pendiente
                     },
                     new Estado
                     {
                         Id = Guid.NewGuid(),
-                        Descripcion = "Pendiente"
+                        Descripcion = Estados.Procesando
                     },
                     new Estado
                     {
                         Id = Guid.NewGuid(),
-                        Descripcion = "Terminado"
+                        Descripcion = Estados.Terminado
                     }
                 };
 

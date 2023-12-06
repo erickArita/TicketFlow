@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TicketFlow.DB.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateTicketDataBase : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +23,11 @@ namespace TicketFlow.DB.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    link = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    link = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,7 +43,11 @@ namespace TicketFlow.DB.Migrations
                     nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     apellido = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
                     correo = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
-                    telefono = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    telefono = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -52,7 +60,11 @@ namespace TicketFlow.DB.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    descripcion = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    descripcion = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -65,7 +77,11 @@ namespace TicketFlow.DB.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    descripcion = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    descripcion = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -143,11 +159,16 @@ namespace TicketFlow.DB.Migrations
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     titulo = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
-                    descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     cliente_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     estado_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     prioridad_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    usuario_id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    usuario_id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    fecha_vencimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -282,7 +303,11 @@ namespace TicketFlow.DB.Migrations
                 columns: table => new
                 {
                     ticket_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    archivo_adjunto_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    archivo_adjunto_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -312,7 +337,11 @@ namespace TicketFlow.DB.Migrations
                     ticket_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     usuario_id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     respuesta = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    respuesta_padre_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    respuesta_padre_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -340,12 +369,49 @@ namespace TicketFlow.DB.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tickets_history",
+                schema: "transacctional",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    usuario_id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ticket_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tickets_history", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_tickets_history_tickets_ticket_id",
+                        column: x => x.ticket_id,
+                        principalSchema: "transacctional",
+                        principalTable: "tickets",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tickets_history_users_usuario_id",
+                        column: x => x.usuario_id,
+                        principalSchema: "security",
+                        principalTable: "users",
+                        principalColumn: "Id",             
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "archivos_respuestas",
                 schema: "transacctional",
                 columns: table => new
                 {
                     respuesta_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    archivo_adjunto_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    archivo_adjunto_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -435,6 +501,18 @@ namespace TicketFlow.DB.Migrations
                 column: "usuario_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_tickets_history_ticket_id",
+                schema: "transacctional",
+                table: "tickets_history",
+                column: "ticket_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tickets_history_usuario_id",
+                schema: "transacctional",
+                table: "tickets_history",
+                column: "usuario_id");
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 schema: "security",
                 table: "users",
@@ -481,6 +559,10 @@ namespace TicketFlow.DB.Migrations
             migrationBuilder.DropTable(
                 name: "roles_claims",
                 schema: "security");
+
+            migrationBuilder.DropTable(
+                name: "tickets_history",
+                schema: "transacctional");
 
             migrationBuilder.DropTable(
                 name: "users_claims",

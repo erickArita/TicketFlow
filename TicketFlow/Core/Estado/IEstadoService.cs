@@ -9,4 +9,5 @@ public interface IEstadoService
     Task<IReadOnlyCollection<EstadoResponse>> GetAllAsync();
     Task UpdateAsync(UpdateEstadoRequest updateEstadoRequest, Guid id);
     Task DeleteAsync(Guid id);
+    Task<EstadoResponse> GetByNameAsync(string name);
 }

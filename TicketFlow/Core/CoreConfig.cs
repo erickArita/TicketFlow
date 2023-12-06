@@ -2,6 +2,7 @@
 using TicketFlow.Core.Customer;
 using TicketFlow.Core.Estado;
 using TicketFlow.Core.Prioridad;
+using TicketFlow.Core.Ticket;
 using TicketFlow.Core.User;
 
 namespace TicketFlow.Core;
@@ -15,5 +16,6 @@ public static class CoreConfig
         services.AddTransient<ICustomerService, CustomerService>();
         services.AddTransient<IPrioridadService, PrioridadService>();
         services.AddTransient<IEstadoService, EstadoService>();
+        services.AddTransient<ITicketService, TicketService>();
     }
 }

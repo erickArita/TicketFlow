@@ -383,6 +383,9 @@ namespace TicketFlow.DB.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Descripcion")
+                        .IsUnique();
+
                     b.ToTable("estados", "transacctional");
                 });
 
@@ -502,6 +505,10 @@ namespace TicketFlow.DB.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("FechaVencimiento")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_vencimiento");
+
                     b.Property<Guid>("PrioridadId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("prioridad_id");
@@ -548,12 +555,8 @@ namespace TicketFlow.DB.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("TicketId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TiketId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("ticket_id");
 
                     b.Property<string>("UsuarioId")
@@ -722,13 +725,15 @@ namespace TicketFlow.DB.Migrations
             modelBuilder.Entity("TicketFlow.Entities.TiketsHistory", b =>
                 {
                     b.HasOne("TicketFlow.Entities.Ticket", "Ticket")
-                        .WithMany()
-                        .HasForeignKey("TicketId");
+                        .WithMany("TiketsHistories")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Ticket");
@@ -755,6 +760,8 @@ namespace TicketFlow.DB.Migrations
                     b.Navigation("ArchivosTickets");
 
                     b.Navigation("Respuestas");
+
+                    b.Navigation("TiketsHistories");
                 });
 #pragma warning restore 612, 618
         }

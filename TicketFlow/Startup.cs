@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using TicketFlow.Core;
+using TicketFlow.Core.Authentication.Utils;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Middlewares;
 using TicketFlow.Services.Email;
@@ -47,7 +50,8 @@ public class Startup
 
         //Add Identity
         services.AddIdentity<IdentityUser, IdentityRole>(options => { options.SignIn.RequireConfirmedAccount = false; })
-            .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders()
+            .AddErrorDescriber<IdentityExceptionsEs>();
 
         //Add Authentication Jwt
         services.AddAuthentication(options =>
@@ -89,8 +93,10 @@ public class Startup
         //para configurar autenticacion en swagger
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiReview", Version = "v1" });
-
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "TicketFlow", Version = "v1" });
+            // using System.Reflection;
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -118,7 +124,6 @@ public class Startup
         services.ConfigureCore();
         services.AddHttpContextAccessor();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthorizationHandlerMiddleware>();
-
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -126,7 +131,20 @@ public class Startup
         //if (env.IsDevelopment())
         //{
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.DefaultModelsExpandDepth(2);
+            c.DefaultModelRendering(ModelRendering.Model);
+            c.DefaultModelsExpandDepth(-1);
+            c.DisplayOperationId();
+            c.DisplayRequestDuration();
+            c.DocExpansion(DocExpansion.None);
+            c.EnableDeepLinking();
+            c.EnableFilter();
+            c.ShowExtensions();
+            c.ShowCommonExtensions();
+            c.EnableValidator();
+        });
         //}
         app.UseMiddleware<ErrorHandlerMiddlerware>();
 

@@ -16,7 +16,7 @@ public class EstadoService : IEstadoService
         _context = context;
         _mapper = mapper;
     }
-    
+
     //metodo para crear un estado
     public async Task<EstadoResponse> AddSync(CreateEstadoRequest createEstadoRequest)
     {
@@ -29,7 +29,7 @@ public class EstadoService : IEstadoService
 
         return _mapper.Map<EstadoResponse>(estadoEntity);
     }
-    
+
     //metodo para obtener un estado por id
     public async Task<EstadoResponse> GetByIdAsync(Guid id)
     {
@@ -42,14 +42,14 @@ public class EstadoService : IEstadoService
 
         return _mapper.Map<EstadoResponse>(estadoEntity);
     }
-    
+
     //metodo para obtener todos los estados
     public async Task<IReadOnlyCollection<EstadoResponse>> GetAllAsync()
     {
         var estados = await _context.Estados.ToListAsync();
         return _mapper.Map<IReadOnlyCollection<EstadoResponse>>(estados);
     }
-    
+
     //metodo para actualizar un estado
     public async Task UpdateAsync(UpdateEstadoRequest updateEstadoRequest, Guid id)
     {
@@ -59,12 +59,12 @@ public class EstadoService : IEstadoService
         {
             throw new TicketFlowException("El estado no existe 😡😡");
         }
-        
+
         _mapper.Map(updateEstadoRequest, estadoEntity);
 
         await _context.SaveChangesAsync();
     }
-    
+
     //metodo para eliminar un estado
     public async Task DeleteAsync(Guid id)
     {
@@ -77,5 +77,17 @@ public class EstadoService : IEstadoService
 
         _context.Estados.Remove(estadoEntity);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<EstadoResponse> GetByNameAsync(string name)
+    {
+        var estadoEntity = await _context.Estados.FirstOrDefaultAsync(x => x.Descripcion == name);
+
+        if (estadoEntity == null)
+        {
+            throw new TicketFlowException("El estado no existe ❌");
+        }
+
+        return _mapper.Map<EstadoResponse>(estadoEntity);
     }
 }
