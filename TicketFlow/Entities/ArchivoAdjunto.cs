@@ -8,9 +8,9 @@ public class ArchivoAdjunto : AggregateRoot
 {
     [Column("id")]
     public Guid Id { get; set; }
-    [Column("link")]
+    [Column("object_id")]
     [Required]
-    public string Link { get; set; }
+    public string ObjectId { get; set; }
     
     public virtual ICollection<ArchivoRespuesta> ArchivosRespuestas { get; set; }
     public virtual ICollection<ArchivoTicket> ArchivosTickets { get; set; }

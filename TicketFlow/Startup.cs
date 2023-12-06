@@ -13,6 +13,8 @@ using TicketFlow.Core.Authentication.Utils;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Middlewares;
 using TicketFlow.Services.Email;
+using TicketFlow.Services.GCS;
+using TicketFlow.Services.GCS.Interfaces;
 
 namespace TicketFlow;
 
@@ -45,6 +47,8 @@ public class Startup
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
 
         services.AddTransient<IEmailSenderService, MailgunEmailService>();
+        services.AddTransient<IFileService, FileService>();
+        services.AddTransient<ISigningService, SigningService>();
         services.AddAutoMapper(typeof(Startup));
         services.AddControllersWithViews();
 

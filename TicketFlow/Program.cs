@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 var startup = new Startup(builder.Configuration);
 
 startup.ConfigureServices(builder.Services);
+Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS",
+    @".\Services\GCS\Credentials\ClientCredentials.json");
 
 var app = builder.Build();
 

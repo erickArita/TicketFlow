@@ -1,4 +1,5 @@
-﻿using TicketFlow.Core.Authentication;
+﻿using TicketFlow.Core.ArchivoAdjunto;
+using TicketFlow.Core.Authentication;
 using TicketFlow.Core.Customer;
 using TicketFlow.Core.Estado;
 using TicketFlow.Core.Prioridad;
@@ -17,5 +18,6 @@ public static class CoreConfig
         services.AddTransient<IPrioridadService, PrioridadService>();
         services.AddTransient<IEstadoService, EstadoService>();
         services.AddTransient<ITicketService, TicketService>();
+        services.AddTransient<IArchivoAdjuntoService, ArchivoAdjuntoService>();
     }
 }
