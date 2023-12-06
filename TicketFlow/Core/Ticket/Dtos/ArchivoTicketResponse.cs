@@ -1,6 +1,7 @@
 ﻿namespace TicketFlow.Core.Ticket.Dtos;
 
-public record ArchivoTicketResponse(
-    Guid Id,
-    string Link
-);
+public record ArchivoTicketResponse
+{
+    public Guid Id { get; set; }
+    public string Link { get; set; }
+}

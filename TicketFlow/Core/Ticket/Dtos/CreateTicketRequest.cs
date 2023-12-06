@@ -5,21 +5,21 @@ namespace TicketFlow.Core.Ticket.Dtos;
 public record CreateTicketRequest
 {
     [Required(ErrorMessage = "Asunto es requerido")]
-    public string Asunto { get; init; }
+    public string Asunto { get; set; }
 
-    public string Descripcion { get; init; }
+    public string Descripcion { get; set; }
 
     [Required(ErrorMessage = "Cliente es requerido")]
-    public Guid ClienteId { get; init; }
+    public Guid ClienteId { get; set; }
 
     [Required(ErrorMessage = "Prioridad es requerida")]
-    public Guid PrioridadId { get; init; }
+    public Guid PrioridadId { get; set; }
 
     [Required(ErrorMessage = "Usuario asignado es requerido")]
-    public string UsuarioAsignadoId { get; init; }
+    public string UsuarioAsignadoId { get; set; }
 
     [Required(ErrorMessage = "Fecha de vencimiento es requerida")]
-    public DateTime FechaVencimiento { get; init; }
+    public DateTime FechaVencimiento { get; set; }
 
     public List<Guid>? ArchivosIds { get; set; } = new();
 }
