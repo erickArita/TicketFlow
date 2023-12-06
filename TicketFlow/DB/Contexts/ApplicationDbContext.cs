@@ -2,9 +2,21 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicketFlow.Entities;
 
 namespace TicketFlow.DB.Contexts;
+
+public class TiketsHistoryConfiguration : IEntityTypeConfiguration<TiketsHistory>
+{
+    public void Configure(EntityTypeBuilder<TiketsHistory> builder)
+    {
+        builder.HasOne(t => t.Usuario)
+            .WithMany()
+            .HasForeignKey(t => t.UsuarioId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+}
 
 public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
@@ -66,7 +78,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(ec => ec.Ticket)
             .WithMany(c => c.ArchivosTickets)
             .HasForeignKey(ec => ec.TicketId);
+
+        builder.ApplyConfiguration(new TiketsHistoryConfiguration());
+        builder.Entity<Estado>()
+            .HasIndex(e => e.Descripcion)
+            .IsUnique();
     }
+
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -106,7 +124,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                         entry.Entity.CreadoPor = userName;
                         entry.Entity.FechaCreacion = utcNow;
                         entry.Entity.ActualizadoPor = userName;
-                        entry.Entity.FechaActualizacion = utcNow;
 
                         break;
                     case EntityState.Modified:

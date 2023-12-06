@@ -13,4 +13,6 @@ public interface ICustomerService
     Task UpdateAsync(Guid id, UpdateCustomerRequest updateCustomerRequest);
 
     Task DeleteAsync(Guid id);
+    
+    Task<bool> ExistsAsync(Guid id);
 }

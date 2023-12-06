@@ -97,4 +97,15 @@ public class UserService : IUserService
         await _emailSenderService.SendEmailAsync(user.Email, "Cambio de contraseña",
             EmailTemplates.ChangePasswordTemplate("Cambio de contraseña", emailBody));
     }
+
+    public async Task<IdentityUser> GetUserInSessionAsync()
+    {
+        var user = await _userManager.GetUserAsync(_signInManager.Context.User);
+        if (user == null)
+        {
+            throw new UnauthorizedException("No se pudo obtener el usuario de la sesión");
+        }
+
+        return user;
+    }
 }

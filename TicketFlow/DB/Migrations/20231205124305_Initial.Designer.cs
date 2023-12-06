@@ -12,8 +12,8 @@ using TicketFlow.DB.Contexts;
 namespace TicketFlow.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231123071054_CreateTicketDataBase")]
-    partial class CreateTicketDataBase
+    [Migration("20231205124305_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,18 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -251,6 +263,18 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("respuesta_id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ArchivoAdjuntoId", "RespuestaId");
 
                     b.HasIndex("RespuestaId");
@@ -268,6 +292,18 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ticket_id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ArchivoAdjuntoId", "TicketId");
 
                     b.HasIndex("TicketId");
@@ -282,6 +318,9 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasMaxLength(70)
@@ -293,6 +332,15 @@ namespace TicketFlow.DB.Migrations
                         .HasMaxLength(70)
                         .HasColumnType("nvarchar(70)")
                         .HasColumnName("correo");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -318,11 +366,23 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("descripcion");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -336,11 +396,23 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("descripcion");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -354,12 +426,24 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Comentario")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("respuesta");
 
-                    b.Property<Guid>("RespuestaPadreId")
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("RespuestaPadreId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("respuesta_padre_id");
 
@@ -390,6 +474,9 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Asunto")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -400,8 +487,10 @@ namespace TicketFlow.DB.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("cliente_id");
 
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("descripcion");
@@ -409,6 +498,16 @@ namespace TicketFlow.DB.Migrations
                     b.Property<Guid>("EstadoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("estado_id");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaVencimiento")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_vencimiento");
 
                     b.Property<Guid>("PrioridadId")
                         .HasColumnType("uniqueidentifier")
@@ -430,6 +529,48 @@ namespace TicketFlow.DB.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("tickets", "transacctional");
+                });
+
+            modelBuilder.Entity("TicketFlow.Entities.TiketsHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ActualizadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("descripcion");
+
+                    b.Property<DateTime?>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ticket_id");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("usuario_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("tickets_history", "transacctional");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -525,9 +666,7 @@ namespace TicketFlow.DB.Migrations
                 {
                     b.HasOne("TicketFlow.Entities.Respuesta", "RespuestaPadre")
                         .WithMany("RespuestasHijas")
-                        .HasForeignKey("RespuestaPadreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("RespuestaPadreId");
 
                     b.HasOne("TicketFlow.Entities.Ticket", "Ticket")
                         .WithMany("Respuestas")
@@ -583,6 +722,25 @@ namespace TicketFlow.DB.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("TicketFlow.Entities.TiketsHistory", b =>
+                {
+                    b.HasOne("TicketFlow.Entities.Ticket", "Ticket")
+                        .WithMany("TiketsHistories")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("TicketFlow.Entities.ArchivoAdjunto", b =>
                 {
                     b.Navigation("ArchivosRespuestas");
@@ -602,6 +760,8 @@ namespace TicketFlow.DB.Migrations
                     b.Navigation("ArchivosTickets");
 
                     b.Navigation("Respuestas");
+
+                    b.Navigation("TiketsHistories");
                 });
 #pragma warning restore 612, 618
         }

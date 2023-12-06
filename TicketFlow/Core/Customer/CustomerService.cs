@@ -60,7 +60,6 @@ public class CustomerService : ICustomerService
         _mapper.Map(updateCustomerRequest, customerEntity);
 
         await _context.SaveChangesAsync();
-        
     }
 
     public Task DeleteAsync(Guid id)
@@ -75,5 +74,10 @@ public class CustomerService : ICustomerService
         _context.Clientes.Remove(customerEntity);
 
         return _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> ExistsAsync(Guid id)
+    {
+        return await _context.Clientes.AnyAsync(x => x.Id == id);
     }
 }

@@ -23,8 +23,8 @@ public static class UsersRolesSeeder
             {
                 var userAdmin = new IdentityUser
                 {
-                    UserName = "jperez",
-                    Email = "jperez@me.com"
+                    UserName = "Erick",
+                    Email = "erick.emao@gmail.com"
                 };
                 await userManager.CreateAsync(userAdmin, "Temporal01#");
                 await userManager.AddToRoleAsync(userAdmin, Roles.Admin);
