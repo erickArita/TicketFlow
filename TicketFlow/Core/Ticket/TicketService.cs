@@ -48,11 +48,7 @@ public class TicketService : ITicketService
     public async Task<TicketWithResponses> GetByIdAsync(Guid id)
     {
         var ticket = await _dbContext.Tickets
-            .Include(ticket => ticket.Cliente)
-            .Include(ticket => ticket.Prioridad)
-            .Include(ticket => ticket.Usuario)
-            .Include(ticket => ticket.Estado)
-            .Include(ticket => ticket.Respuestas)
+            .Include(c => c.Respuestas)
             .FirstOrDefaultAsync(ticket => ticket.Id == id);
 
         if (ticket is null)
@@ -61,8 +57,32 @@ public class TicketService : ITicketService
         }
 
         var ticketResponse = _mapper.Map<TicketWithResponses>(ticket);
+
+        // Cargar respuestas planas sin relaciones anidadas
+        var respuestasDb = await _dbContext.Respuestas
+            .Where(r => r.TicketId == id)
+            .ToListAsync();
+
+        // Organizar respuestas en una estructura jerárquica en memoria
+        ticketResponse.Respuestas = BuildRespuestasHierarchy(respuestasDb, null);
+
         return ticketResponse;
     }
+
+    private List<RespuestaResponse> BuildRespuestasHierarchy(List<Respuesta> respuestasDb, Guid? respuestaPadreId)
+    {
+        var respuestasDto = _mapper.Map<List<RespuestaResponse>>(respuestasDb
+            .Where(r => r.RespuestaPadreId == respuestaPadreId)
+            .ToList());
+
+        foreach (var respuestaDto in respuestasDto)
+        {
+            respuestaDto.RespuestasHijas = BuildRespuestasHierarchy(respuestasDb, respuestaDto.Id);
+        }
+
+        return respuestasDto;
+    }
+
 
     public async Task<TicketResponse> AddAsync(CreateTicketRequest ticketCreationDto)
     {

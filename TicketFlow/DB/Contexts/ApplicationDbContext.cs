@@ -124,7 +124,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                         entry.Entity.CreadoPor = userName;
                         entry.Entity.FechaCreacion = utcNow;
                         entry.Entity.ActualizadoPor = userName;
-                        entry.Entity.FechaActualizacion = utcNow;
 
                         break;
                     case EntityState.Modified:

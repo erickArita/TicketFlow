@@ -74,9 +74,7 @@ public class AutoMapperProfiles : Profile
             .ForMember(ticketResponse => ticketResponse.UsuarioAsignadoId,
                 opt => opt.MapFrom(ticket => ticket.Usuario.Id))
             .ForMember(ticketResponse => ticketResponse.EstadoDescripcion,
-                opt => opt.MapFrom(ticket => ticket.Estado.Descripcion))
-            .ForMember(ticketResponse => ticketResponse.Respuestas,
-                opt => opt.MapFrom(ticket => ticket.Respuestas));
+                opt => opt.MapFrom(ticket => ticket.Estado.Descripcion));
     }
 
     private void ResponseMaps()
@@ -84,7 +82,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<CreateResponseRequest, Respuesta>();
         CreateMap<Respuesta, RespuestaResponse>()
             .ForMember(respuestaResponse => respuestaResponse.UsuarioNombre,
-                opt => opt.MapFrom(respuesta => respuesta.Usuario.UserName));
+                opt => opt.MapFrom(respuesta => respuesta.Usuario.UserName))
+            .ForMember(respuestaResponse => respuestaResponse.RespuestasHijas,
+                opt => opt.MapFrom(respuesta => respuesta.RespuestasHijas))
+            ;
 
         CreateMap<Cliente, CustomerResponse>();
         CreateMap<Prioridad, PrioridadResponse>();

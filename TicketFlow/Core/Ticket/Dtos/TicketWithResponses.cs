@@ -1,6 +1,6 @@
 ﻿using TicketFlow.Core.Ticket.Dtos;
 
-namespace TicketFlow.Controllers;
+namespace TicketFlow.Core.Ticket.Dtos;
 
 public record TicketWithResponses : TicketResponse
 {
