@@ -49,15 +49,6 @@ public class TicketsController : ControllerBase
     /// <summary>
     ///   Crea un nuevo ticket con sus respectivos archivos, si los tiene, este metodo es solo para el rol de admin
     /// </summary>
-    /// <param name="ticketCreationDto">
-    ///    <see cref="CreateTicketRequest"/>
-    /// </param>
-    /// <param name="Archivos">
-    ///   <see cref="IFormFile"/>
-    /// </param>
-    /// <returns>
-    ///  <see cref="TicketResponse"/>
-    /// </returns>
     [HttpPost]
     [Authorize(Roles = nameof(Roles.Admin))]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> Post(
@@ -74,9 +65,6 @@ public class TicketsController : ControllerBase
     /// <summary>
     /// Actualiza todos los campos de un ticket 
     /// </summary>
-    /// <param name="ticketId"></param>
-    /// <param name="ticketUpdateDto"></param>
-    /// <returns></returns>
     [HttpPut("{ticketId}")]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> Put(
         Guid ticketId,
@@ -99,15 +87,6 @@ public class TicketsController : ControllerBase
     /// <summary>
     ///     Reemplaza al usuaruio encargado del ticket, solo para el rol de admin
     /// </summary>
-    /// <param name="ticketId">
-    /// Guid
-    /// </param>
-    /// <param name="userId">
-    /// Guid
-    /// </param>
-    /// <returns>
-    /// <see cref="TicketResponse"/>
-    /// </returns>
     [HttpPost("{ticketId}/users/{userId}")]
     [Authorize(Roles = nameof(Roles.Admin))]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> AddUser2Ticket(Guid ticketId, Guid userId)
