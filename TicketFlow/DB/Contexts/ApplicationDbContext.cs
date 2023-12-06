@@ -123,7 +123,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                     case EntityState.Added:
                         entry.Entity.CreadoPor = userName;
                         entry.Entity.FechaCreacion = utcNow;
-                        entry.Entity.ActualizadoPor = userName;
 
                         break;
                     case EntityState.Modified:

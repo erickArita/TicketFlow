@@ -53,7 +53,7 @@ namespace TicketFlow.Controllers
         {
             var estado = await _estadoService.AddSync(createEstadoRequest);
             
-            return Ok(
+            return StatusCode(StatusCodes.Status201Created,
                 new AplicationResponse<EstadoResponse>
                 {
                     Data = estado

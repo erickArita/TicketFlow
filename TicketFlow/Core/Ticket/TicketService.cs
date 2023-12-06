@@ -4,6 +4,7 @@ using TicketFlow.Common.Exceptions;
 using TicketFlow.Core.Estado;
 using TicketFlow.Core.Ticket.Dtos;
 using TicketFlow.Core.Ticket.Extensions;
+using TicketFlow.Core.TicketHistory;
 using TicketFlow.Core.User;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Entities;
@@ -19,6 +20,7 @@ public class TicketService : ITicketService
     private readonly IUserService _userService;
     private readonly IEstadoService _estadoService;
     private readonly ISigningService _signingService;
+    private readonly ITicketHistoryService _ticketHistoryService;
 
 
     public TicketService(
@@ -26,7 +28,8 @@ public class TicketService : ITicketService
         IMapper mapper,
         IUserService userService,
         IEstadoService estadoService,
-        ISigningService signingService
+        ISigningService signingService,
+        ITicketHistoryService ticketHistoryService
     )
     {
         _dbContext = dbContext;
@@ -34,6 +37,7 @@ public class TicketService : ITicketService
         _userService = userService;
         _estadoService = estadoService;
         _signingService = signingService;
+        _ticketHistoryService = ticketHistoryService;
     }
 
     public async Task<IReadOnlyCollection<TicketResponse>> GetAllAsync()
@@ -56,8 +60,12 @@ public class TicketService : ITicketService
         return ticketResponses;
     }
 
-    public async Task<TicketWithResponses> GetByIdAsync(Guid id)
+    public async Task<TicketWithResponses> GetByIdAsync(Guid? id)
     {
+        if (id is null)
+        {
+            return null;
+        }
         var ticket = await _dbContext.Tickets
             .Include(c => c.Respuestas)
             .Include(ticket => ticket.Cliente)
@@ -127,6 +135,8 @@ public class TicketService : ITicketService
         _dbContext.Tickets.Add(ticket);
 
         await _dbContext.SaveChangesAsync();
+        
+        await _ticketHistoryService.AddTicketHistoryAsync($"Se creo el ticket {ticket.Asunto}", ticket.Id);
 
         var newTicket = await _dbContext.Tickets
             .Include(p => p.Cliente)
@@ -161,6 +171,8 @@ public class TicketService : ITicketService
         _mapper.Map(ticketUpdateDto, ticket);
 
         await _dbContext.SaveChangesAsync();
+
+        await _ticketHistoryService.AddTicketHistoryAsync("Se actualizo el ticket", ticket.Id);
 
         var updatedTicket = _mapper.Map<TicketResponse>(ticket);
 
@@ -199,6 +211,9 @@ public class TicketService : ITicketService
         ticket.UsuarioId = user.Id;
         await _dbContext.SaveChangesAsync();
 
+        await _ticketHistoryService.AddTicketHistoryAsync($"Se removio el usuario {ticket.Usuario.UserName} del ticket", ticket.Id);
+        await _ticketHistoryService.AddTicketHistoryAsync($"Se asigno el usuario {user.UserName} al ticket", ticket.Id);
+
         return _mapper.Map<TicketResponse>(ticket);
     }
 
@@ -221,8 +236,11 @@ public class TicketService : ITicketService
             throw new TicketFlowException(
                 $"Estado {estado.Descripcion} ya esta asignado al ticket {ticket.Asunto} debe seleccionar otro estado 😅 ");
 
+        await _ticketHistoryService.AddTicketHistoryAsync($"Se cambio el estado del ticket de {ticket.Estado.Descripcion} a {estado.Descripcion}", ticket.Id);
+        
         ticket.EstadoId = estado.Id;
         await _dbContext.SaveChangesAsync();
+
 
         var updatedTicket = _mapper.Map<TicketResponse>(ticket);
 
@@ -247,46 +265,12 @@ public class TicketService : ITicketService
             throw new TicketFlowException(
                 $"Prioridad {prioridad.Descripcion} ya esta asignado al ticket {ticket.Asunto} debe seleccionar otra prioridad 😅 ");
 
+        await _ticketHistoryService.AddTicketHistoryAsync($"Se cambio la prioridad del ticket de {ticket.Prioridad.Descripcion} a {prioridad.Descripcion}", ticket.Id);
+        
         ticket.PrioridadId = prioridad.Id;
         await _dbContext.SaveChangesAsync();
+        
 
         return _mapper.Map<TicketResponse>(ticket);
-    }
-
-    public async Task<RespuestaResponse> AddResponseAsync(Guid ticketId, CreateResponseRequest respuestaCreationDto)
-    {
-        var ticket = await GetByIdAsync(ticketId);
-        var user = await _userService.GetUserInSessionAsync();
-
-        if (ticket is null) throw new NotFoundException($"Ticket con id {ticketId} no existe 😪");
-
-        var respuesta = _mapper.Map<Respuesta>(respuestaCreationDto);
-
-        respuesta.Id = Guid.NewGuid();
-        respuesta.UsuarioId = user.Id;
-        respuesta.TicketId = ticket.Id;
-
-        var entity = await _dbContext.Respuestas.AddAsync(respuesta);
-        await _dbContext.SaveChangesAsync();
-
-        var respuestaResponse = _mapper.Map<RespuestaResponse>(entity.Entity);
-
-        respuestaResponse.modificado = respuestaResponse.FechaModificacion.HasValue;
-
-        return respuestaResponse;
-    }
-
-    public async Task<RespuestaResponse> UpdateResponseAsync(Guid respuestaId, UpdateResponseRequest respuestaUpdateDto)
-    {
-        var respuesta = await _dbContext.Respuestas
-            .Include(r => r.Usuario)
-            .FirstOrDefaultAsync(respuesta => respuesta.Id == respuestaId);
-
-        if (respuesta is null) throw new NotFoundException($"Respuesta con id {respuestaId} no existe 😪");
-
-        respuesta.Comentario = respuestaUpdateDto.Comentario;
-        await _dbContext.SaveChangesAsync();
-
-        return _mapper.Map<RespuestaResponse>(respuesta);
     }
 }

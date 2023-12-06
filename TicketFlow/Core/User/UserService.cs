@@ -108,4 +108,19 @@ public class UserService : IUserService
 
         return user;
     }
+    
+    // metodo paera obtener un usuario por id
+    public async Task<UserRoleResponse> GetUserByIdAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            throw new TicketFlowException($"El usuario con id {userId} no existe ❌😡");
+        }
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var userRoleResponse = new UserRoleResponse(user.Id, user.UserName, user.Email, string.Join(",", userRoles));
+
+        return userRoleResponse;
+    }
 }

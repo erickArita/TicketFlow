@@ -9,4 +9,5 @@ public interface IUserService
     Task<List<UserRoleResponse>> GetUsersAsync();
     Task ChangePasswordAsAdminAsync(ChangePasswordAsAdminRequest changePasswordAsAdminRequest);
     Task<IdentityUser> GetUserInSessionAsync();
+    Task<UserRoleResponse> GetUserByIdAsync(string userId);
 }
