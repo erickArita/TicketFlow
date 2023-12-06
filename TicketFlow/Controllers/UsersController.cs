@@ -33,6 +33,19 @@ public class UsersController : ControllerBase
             Data = users
         });
     }
+    
+    //endpoint para obtener un usuario por id
+    [HttpGet("/GetUserById")]
+    public async Task<IActionResult> GetUserById(string userId)
+    {
+        var user = await _userService.GetUserByIdAsync(userId);
+
+        return Ok(new AplicationResponse<UserRoleResponse>
+        {
+            Message = "Usuario obtenido correctamente",
+            Data = user
+        });
+    }
 
     //endpoint para actualizar el rol de un usuario
     [HttpPatch]

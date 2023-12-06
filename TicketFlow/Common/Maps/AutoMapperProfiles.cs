@@ -100,6 +100,10 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(respuesta => respuesta.Usuario.UserName))
             .ForMember(respuestaResponse => respuestaResponse.RespuestasHijas,
                 opt => opt.MapFrom(respuesta => respuesta.RespuestasHijas))
+            .ForMember(r => r.modificado,
+                opt => opt.MapFrom(r => r.FechaActualizacion.HasValue))
+            .ForMember(opt => opt.FechaModificacion,
+                opt => opt.MapFrom(r => r.FechaActualizacion))
             ;
 
         CreateMap<Cliente, CustomerResponse>();

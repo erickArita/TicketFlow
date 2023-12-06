@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketFlow.Common.Utils;
+using TicketFlow.Core.Respuestas;
 using TicketFlow.Core.Ticket;
 using TicketFlow.Core.Ticket.Dtos;
 using TicketFlow.Entities.Enums;
@@ -13,10 +14,12 @@ namespace TicketFlow.Controllers;
 public class TicketsController : ControllerBase
 {
     private readonly ITicketService _ticketService;
+    private readonly IRespuestasService _respuestasService;
 
-    public TicketsController(ITicketService ticketService)
+    public TicketsController(ITicketService ticketService, IRespuestasService respuestasService)
     {
         _ticketService = ticketService;
+        _respuestasService = respuestasService;
     }
 
     /// <summary>
@@ -46,22 +49,14 @@ public class TicketsController : ControllerBase
     /// <summary>
     ///   Crea un nuevo ticket con sus respectivos archivos, si los tiene, este metodo es solo para el rol de admin
     /// </summary>
-    /// <param name="ticketCreationDto">
-    ///    <see cref="CreateTicketRequest"/>
-    /// </param>
-    /// <param name="Archivos">
-    ///   <see cref="IFormFile"/>
-    /// </param>
-    /// <returns>
-    ///  <see cref="TicketResponse"/>
-    /// </returns>
     [HttpPost]
     [Authorize(Roles = nameof(Roles.Admin))]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> Post(
         CreateTicketRequest ticketCreationDto)
     {
         var ticket = await _ticketService.AddAsync(ticketCreationDto);
-        return Ok(new AplicationResponse<TicketResponse>
+        return StatusCode(StatusCodes.Status201Created,
+            new AplicationResponse<TicketResponse>
         {
             Data = ticket,
         });
@@ -70,9 +65,6 @@ public class TicketsController : ControllerBase
     /// <summary>
     /// Actualiza todos los campos de un ticket 
     /// </summary>
-    /// <param name="ticketId"></param>
-    /// <param name="ticketUpdateDto"></param>
-    /// <returns></returns>
     [HttpPut("{ticketId}")]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> Put(
         Guid ticketId,
@@ -95,15 +87,6 @@ public class TicketsController : ControllerBase
     /// <summary>
     ///     Reemplaza al usuaruio encargado del ticket, solo para el rol de admin
     /// </summary>
-    /// <param name="ticketId">
-    /// Guid
-    /// </param>
-    /// <param name="userId">
-    /// Guid
-    /// </param>
-    /// <returns>
-    /// <see cref="TicketResponse"/>
-    /// </returns>
     [HttpPost("{ticketId}/users/{userId}")]
     [Authorize(Roles = nameof(Roles.Admin))]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> AddUser2Ticket(Guid ticketId, Guid userId)
@@ -144,13 +127,12 @@ public class TicketsController : ControllerBase
     /// <summary>
     ///     Agrega una respuesta a un ticket
     /// </summary>
-    [HttpPost("{ticketId:guid}/responses")]
-    public async Task<ActionResult<AplicationResponse<RespuestaResponse>>> AddResponse(
-        Guid ticketId,
-        CreateResponseRequest respuestaCreationDto)
+    [HttpPost("/responses")]
+    public async Task<ActionResult<AplicationResponse<RespuestaResponse>>> AddResponse(CreateResponseRequest respuestaCreationDto)
     {
-        var respuesta = await _ticketService.AddResponseAsync(ticketId, respuestaCreationDto);
-        return Ok(new AplicationResponse<RespuestaResponse>
+        var respuesta = await _respuestasService.AddResponseAsync(respuestaCreationDto);
+        return StatusCode(StatusCodes.Status201Created,
+            new AplicationResponse<RespuestaResponse>
         {
             Data = respuesta,
         });
@@ -164,7 +146,7 @@ public class TicketsController : ControllerBase
         Guid respuestaId,
         UpdateResponseRequest respuestaUpdateDto)
     {
-        var respuesta = await _ticketService.UpdateResponseAsync(respuestaId, respuestaUpdateDto);
+        var respuesta = await _respuestasService.UpdateResponseAsync(respuestaId, respuestaUpdateDto);
         return Ok(new AplicationResponse<RespuestaResponse>
         {
             Data = respuesta,

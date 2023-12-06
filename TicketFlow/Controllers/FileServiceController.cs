@@ -25,7 +25,8 @@ public class FileServiceController : ControllerBase
     {
         var archivoAdjunto = await _archivoAdjuntoService.GuardarArchivo(file);
 
-        return Ok(new AplicationResponse<ArchivoAdjuntoResponse>()
+        return StatusCode(StatusCodes.Status201Created,
+            new AplicationResponse<ArchivoAdjuntoResponse>()
         {
             Message = "Archivo guardado correctamente ✅",
             Data = archivoAdjunto,
