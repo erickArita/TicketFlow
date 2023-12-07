@@ -35,7 +35,7 @@ public class FileServiceController : ControllerBase
 
     [HttpPost("multiple")]
     public async Task<ActionResult<AplicationResponse<ICollection<ArchivoAdjuntoResponse>>>> UploadFiles(
-        [FromForm] ICollection<CreateArchivoAdjunto> files)
+        [FromForm] ICollection<IFormFile> files)
     {
         var archivosAdjuntos = await _archivoAdjuntoService.GuardarArchivos(files);
 

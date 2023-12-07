@@ -68,6 +68,7 @@ public class TicketService : ITicketService
         }
         var ticket = await _dbContext.Tickets
             .Include(c => c.Respuestas)
+            .ThenInclude(r => r.ArchivoRespuestas)
             .Include(ticket => ticket.Cliente)
             .Include(ticket => ticket.Prioridad)
             .Include(ticket => ticket.Usuario)

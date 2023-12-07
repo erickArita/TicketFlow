@@ -21,5 +21,5 @@ public record CreateTicketRequest
     [Required(ErrorMessage = "Fecha de vencimiento es requerida")]
     public DateTime FechaVencimiento { get; set; }
 
-    public List<Guid>? ArchivosIds { get; set; } = new();
+    public List<Guid>? ArchivosTickets { get; set; } = new();
 }
