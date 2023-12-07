@@ -1,5 +1,6 @@
 using System.Net;
 using TicketFlow.Common.Exceptions;
+using TicketFlow.Common.Logger;
 using TicketFlow.Common.Utils;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -28,13 +29,16 @@ public class ErrorHandlerMiddlerware
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger logger)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception,
+        ILogger<ErrorHandlerMiddlerware> logger)
     {
         ExceptionResponse response = new();
+        var logState = new LogState();
+        logState.OperationType = OperationTypes.Log;
+        logState.exception = exception.ToString();
         switch (exception)
         {
             case TicketFlowException ticketFlowException:
-                logger.LogInformation(exception, "----------------------TicketFlow ERROR TYPE---------------------");
                 response.Errors = ticketFlowException.Errors ?? string.Empty;
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Title = "----------------------TicketFlow ERROR TYPE---------------------";
@@ -42,7 +46,6 @@ public class ErrorHandlerMiddlerware
                 break;
 
             case NotFoundException notFoundException:
-                logger.LogError(exception, "----------------------NOT FOUND ERROR TYPE---------------------");
                 response.Errors = notFoundException.Errors ?? string.Empty;
                 response.StatusCode = HttpStatusCode.NotFound;
                 response.Title = "----------------------NOT FOUND ERROR TYPE---------------------";
@@ -51,7 +54,6 @@ public class ErrorHandlerMiddlerware
                 break;
 
             case UnauthorizedException unauthorizedException:
-                logger.LogInformation(exception, "----------------------AUTHENTICATION EXCEPTION---------------------");
                 response.Errors = unauthorizedException.Errors ?? string.Empty;
                 response.StatusCode = HttpStatusCode.Unauthorized;
                 response.Title = "----------------------AUTHENTICATION EXCEPTION---------------------";
@@ -59,7 +61,6 @@ public class ErrorHandlerMiddlerware
                 break;
 
             case ForbiddenException forbiddenException:
-                logger.LogError(exception, "----------------------AUTHORIZATION EXCEPTION---------------------");
                 response.Title = "----------------------AUTHORIZATION EXCEPTION---------------------";
                 response.Errors = forbiddenException.Message ?? string.Empty;
                 response.StatusCode = HttpStatusCode.Unauthorized;
@@ -68,13 +69,17 @@ public class ErrorHandlerMiddlerware
 
 
             case { }:
-                logger.LogError(exception, "----------------------SERVER ERROR TYPE---------------------");
+                response.Title = "---------------------SERVER ERROR TYPE---------------------";
                 response.Errors = "Ha ocurrido un error en el servidor";
                 response.StatusCode = HttpStatusCode.InternalServerError;
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 break;
         }
 
+        logState.Title = response.Title;
+        logState.exception = exception.ToString();
+        var exp = response.Title + exception.Message;
+        logger.LogError(exp, new[] { logState });
         context.Response.ContentType = "application/json";
 
         var result = JsonSerializer.Serialize(response);

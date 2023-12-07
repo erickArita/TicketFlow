@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using TicketFlow.Common.Logger;
 using TicketFlow.Core;
 using TicketFlow.Core.Authentication.Utils;
 using TicketFlow.DB.Contexts;
@@ -15,6 +17,9 @@ using TicketFlow.Middlewares;
 using TicketFlow.Services.Email;
 using TicketFlow.Services.GCS;
 using TicketFlow.Services.GCS.Interfaces;
+using Serilog;
+using Serilog.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 
 namespace TicketFlow;
 
@@ -31,6 +36,18 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        FirestoreDocumentEnricher firestoreDocumentEnricher = new(Configuration);
+        // Configuración de Serilog
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Warning()
+            .WriteTo.Console()
+            .WriteTo.Sink(firestoreDocumentEnricher)
+            .CreateLogger();
+
+
+        // Agregar el logger como servicio
+        services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
+
         services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler
             = ReferenceHandler
                 .IgnoreCycles); // para solucionar el error de entra en bucle el sql porque hay una relacion de muchos a muchos
@@ -44,7 +61,9 @@ public class Startup
 
 
         //Add DbContext
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(defaultConnection));
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(defaultConnection)
+        );
 
         services.AddTransient<IEmailSenderService, MailgunEmailService>();
         services.AddTransient<IFileService, FileService>();

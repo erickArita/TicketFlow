@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Serilog;
+using NuGet.Protocol;
+using TicketFlow.Common.Logger;
 using TicketFlow.Entities;
 
 namespace TicketFlow.DB.Contexts;
@@ -22,6 +23,7 @@ public class TiketsHistoryConfiguration : IEntityTypeConfiguration<TiketsHistory
 public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
     private readonly IHttpContextAccessor _accessor;
+    private readonly ILogger<ApplicationDbContext> _logger;
 
     public DbSet<ArchivoAdjunto> ArchivosAdjuntos { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
@@ -34,9 +36,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<TiketsHistory> TiketsHistory { get; set; }
 
 
-    public ApplicationDbContext(DbContextOptions options, IHttpContextAccessor accessor) : base(options)
+    public ApplicationDbContext(DbContextOptions options, IHttpContextAccessor accessor,
+        ILogger<ApplicationDbContext> logger) : base(options)
     {
         _accessor = accessor;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
 
@@ -112,26 +116,38 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         {
             if (entry.State is EntityState.Detached or EntityState.Unchanged)
                 continue;
+            var logState = new LogState();
 
-
+            var originalValues = entry.OriginalValues.ToObject();
+            var currentValues = entry.CurrentValues.ToObject();
+            var action = entry.State.ToString();
+            var entityName = entry.Entity.GetType().Name;
+                
+            logState.OperationType = OperationTypes.Log;
+            logState.Before = originalValues;
+            logState.After = currentValues;
+                
+            _logger.LogWarning(logState.ToJson());
+            
             foreach (var property in entry.Properties)
             {
                 string propertyName = property.Metadata.Name;
                 if (property.Metadata.IsPrimaryKey()) continue;
+
+              
 
                 switch (entry.State)
                 {
                     case EntityState.Added:
                         entry.Entity.CreadoPor = userName;
                         entry.Entity.FechaCreacion = utcNow;
-                         break;
+                        break;
                     case EntityState.Modified:
                         entry.Entity.ActualizadoPor = userName;
                         entry.Entity.FechaActualizacion = utcNow;
-                  
                         break;
                     case EntityState.Deleted:
-                        //
+    
                         break;
                 }
             }
