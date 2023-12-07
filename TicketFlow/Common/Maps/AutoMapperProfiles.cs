@@ -146,5 +146,6 @@ public class AutoMapperProfiles : Profile
                 archivoRespuestaResponse => archivoRespuestaResponse.Id,
                 opt => opt.MapFrom(archivoRespuesta => archivoRespuesta.ArchivoAdjunto.Id
                 ));
+        CreateMap<UpdateResponseRequest, RespuestaResponse>();
     }
 }
