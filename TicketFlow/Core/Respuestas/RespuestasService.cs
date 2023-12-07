@@ -55,6 +55,8 @@ public class RespuestasService : IRespuestasService
     {
         var respuesta = await _dbContext.Respuestas
             .Include(r => r.Usuario)
+            .Include(r => r.ArchivoRespuestas)
+            .ThenInclude(r => r.ArchivoAdjunto)
             .FirstOrDefaultAsync(respuesta => respuesta.Id == respuestaId);
 
         if (respuesta is null) throw new NotFoundException($"Respuesta con id {respuestaId} no existe 😪");

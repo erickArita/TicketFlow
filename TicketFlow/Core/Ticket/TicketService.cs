@@ -256,6 +256,7 @@ public class TicketService : ITicketService
         var ticket = await _dbContext.Tickets
             .Include(c => c.Cliente)
             .Include(p => p.Estado)
+            .Include(p => p.Prioridad)
             .Include(u => u.Usuario).FirstOrDefaultAsync(ticket => ticket.Id == ticketId);
         var prioridad = await _dbContext.Prioridades.FirstOrDefaultAsync(prioridad => prioridad.Id == prioridadId);
 
