@@ -89,7 +89,7 @@ public class UserService : IUserService
 
         if (!result.Succeeded)
         {
-            throw new TicketFlowException("Error al cambiar la contraseña");
+            throw new TicketFlowException(result.Errors);
         }
 
         var emailBody = "Su contraseña ha sido cambiada correctamente";

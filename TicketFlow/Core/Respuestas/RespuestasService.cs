@@ -55,15 +55,33 @@ public class RespuestasService : IRespuestasService
     {
         var respuesta = await _dbContext.Respuestas
             .Include(r => r.Usuario)
+            .Include(r => r.ArchivoRespuestas)
+            .ThenInclude(r => r.ArchivoAdjunto)
             .FirstOrDefaultAsync(respuesta => respuesta.Id == respuestaId);
 
         if (respuesta is null) throw new NotFoundException($"Respuesta con id {respuestaId} no existe 😪");
-
+        
         respuesta.Comentario = respuestaUpdateDto.Comentario;
+
+        if (respuestaUpdateDto.FilesIds is not null)
+        {
+            respuesta.ArchivoRespuestas = respuestaUpdateDto.FilesIds.Select(id => new ArchivoRespuesta
+            {
+                ArchivoAdjuntoId = id,
+                RespuestaId = respuesta.Id,
+            }).ToList();
+        }
+        _dbContext.Respuestas.Update(respuesta);
         await _dbContext.SaveChangesAsync();
+        
+        var newResponse = await _dbContext.Respuestas
+            .Include(r => r.Usuario)
+            .Include(r => r.ArchivoRespuestas)
+            .ThenInclude(r => r.ArchivoAdjunto)
+            .FirstOrDefaultAsync(respuesta => respuesta.Id == respuestaId); 
 
         await _ticketHistoryService.AddTicketHistoryAsync($"Se actualizo una respuesta del ticket", respuesta.TicketId);
-        var respuestaResponse = _mapper.Map<RespuestaResponse>(respuesta);
+        var respuestaResponse = _mapper.Map<RespuestaResponse>(newResponse);
         await respuestaResponse.SignFiles(_signingService);
         return respuestaResponse;
     }

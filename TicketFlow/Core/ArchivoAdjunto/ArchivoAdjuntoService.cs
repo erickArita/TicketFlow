@@ -1,4 +1,5 @@
-﻿using TicketFlow.Core.ArchivoAdjunto.Dtos;
+﻿using TicketFlow.Common.Exceptions;
+using TicketFlow.Core.ArchivoAdjunto.Dtos;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Services.GCS.Interfaces;
 
@@ -19,9 +20,9 @@ public class ArchivoAdjuntoService : IArchivoAdjuntoService
 
     public async Task<ArchivoAdjuntoResponse> GuardarArchivo(CreateArchivoAdjunto contenido)
     {
-        if (contenido is null)
+        if (contenido.Archivo is null)
         {
-            throw new ArgumentNullException("Se debe enviar un archivo");
+            throw new TicketFlowException("Se debe enviar un archivo");
         }
         
         var objectName = await _fileService.GuardarArchivo(contenido.Archivo, "archivos");
@@ -44,7 +45,7 @@ public class ArchivoAdjuntoService : IArchivoAdjuntoService
     {
         if (files is null || files.Count == 0)
         {
-            throw new ArgumentNullException("Se debe enviar al menos un archivo");
+            throw new TicketFlowException("Se debe enviar al menos un archivo");
         }
         
         var archivosAdjuntos = new List<ArchivoAdjuntoResponse>();

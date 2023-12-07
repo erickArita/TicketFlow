@@ -63,14 +63,15 @@ namespace TicketFlow.Controllers
         }
         
         [HttpPut("{id}")]
-        public async Task<ActionResult<AplicationResponse<string>>> Put(Guid id, UpdatePrioridadRequest updatePrioridad)
+        public async Task<ActionResult<AplicationResponse<PrioridadResponse>>> Put(Guid id, UpdatePrioridadRequest updatePrioridad)
         {
-            await _prioridadService.UpdateAsync(updatePrioridad, id);
+            var prioriodadResponse = await _prioridadService.UpdateAsync(updatePrioridad, id);
 
             return Ok(
-                new AplicationResponse<string>
+                new AplicationResponse<PrioridadResponse>
                 {
-                    Message = "Prioridad actualizada correctamente 🤩🤩"
+                    Message = "Prioridad actualizada correctamente 🤩🤩",
+                    Data = prioriodadResponse
                 }
             );
         }

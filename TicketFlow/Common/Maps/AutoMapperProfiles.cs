@@ -108,7 +108,7 @@ public class AutoMapperProfiles : Profile
     private void ResponseMaps()
     {
         CreateMap<CreateResponseRequest, Respuesta>()
-            .ForMember(r => r.ArchivoRespuestas, opt => opt.MapFrom((r, f) => r.FilesIds.Select(id => new ArchivoRespuesta
+            .ForMember(r => r.ArchivoRespuestas, opt => opt.MapFrom((r, f) => r.FilesIds?.Select(id => new ArchivoRespuesta
             {
                 ArchivoAdjuntoId = id,
                 RespuestaId = f.Id,
@@ -146,5 +146,6 @@ public class AutoMapperProfiles : Profile
                 archivoRespuestaResponse => archivoRespuestaResponse.Id,
                 opt => opt.MapFrom(archivoRespuesta => archivoRespuesta.ArchivoAdjunto.Id
                 ));
+        CreateMap<UpdateResponseRequest, RespuestaResponse>();
     }
 }
