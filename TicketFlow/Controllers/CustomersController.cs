@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using TicketFlow.Common.Utils;
 using TicketFlow.Core.Customer;
 using TicketFlow.Core.Customer.Dtos;

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using TicketFlow.Common.Exceptions;
 using TicketFlow.Core.Dtos;
-using TicketFlow.Helpers;
 using TicketFlow.Services.Email;
 
 namespace TicketFlow.Core.User;
@@ -35,7 +34,7 @@ public class UserService : IUserService
         {
             throw new TicketFlowException($"El usuario con id {updateRoleRequest.UserId} no existe ❌😡");
         }
-        
+
         //verrificar que el rol exista
         var existRole = await _roleManager.FindByNameAsync(updateRoleRequest.NewRoleName);
         if (existRole == null)
@@ -58,7 +57,7 @@ public class UserService : IUserService
 
         return result.Succeeded;
     }
-    
+
     //metodo para listar los usuarios con sus roles
     public async Task<List<UserRoleResponse>> GetUsersAsync()
     {
@@ -74,14 +73,15 @@ public class UserService : IUserService
 
         return usersRoleResponse;
     }
-    
+
     //metodo para cambiar contrasena con admin
     public async Task ChangePasswordAsAdminAsync(ChangePasswordAsAdminRequest changePasswordAsAdminRequest)
     {
         var user = await _userManager.FindByIdAsync(changePasswordAsAdminRequest.TargetUserId);
         if (user == null)
         {
-            throw new TicketFlowException($"El usuario con id {changePasswordAsAdminRequest.TargetUserId} no existe ❌😡");
+            throw new TicketFlowException(
+                $"El usuario con id {changePasswordAsAdminRequest.TargetUserId} no existe ❌😡");
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -91,11 +91,11 @@ public class UserService : IUserService
         {
             throw new TicketFlowException("Error al cambiar la contraseña");
         }
-        
+
         var emailBody = "Su contraseña ha sido cambiada correctamente";
 
         await _emailSenderService.SendEmailAsync(user.Email, "Cambio de contraseña",
-            EmailTemplates.ChangePasswordTemplate("Cambio de contraseña", emailBody));
+            EmailTemplatesManager.EmailTemplatesManager.ChangePasswordTemplate("Cambio de contraseña", emailBody));
     }
 
     public async Task<IdentityUser> GetUserInSessionAsync()
@@ -108,7 +108,7 @@ public class UserService : IUserService
 
         return user;
     }
-    
+
     // metodo paera obtener un usuario por id
     public async Task<UserRoleResponse> GetUserByIdAsync(string userId)
     {

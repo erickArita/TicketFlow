@@ -1,10 +1,10 @@
-﻿namespace TicketFlow.Helpers;
+﻿namespace TicketFlow.EmailTemplatesManager;
 
-public class EmailTemplates
+public static class EmailTemplatesManager
 {
     private static string OtenerPlantillaHtml()
     {
-        var path = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", "BaseTemplate.html");
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplatesManager", "EmailBaseTemplateCustom.html");
         var archivo = File.ReadAllText(path);
         return archivo;
     }

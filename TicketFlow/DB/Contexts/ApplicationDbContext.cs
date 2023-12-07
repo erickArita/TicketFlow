@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Serilog;
 using TicketFlow.Entities;
 
 namespace TicketFlow.DB.Contexts;
@@ -123,12 +124,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                     case EntityState.Added:
                         entry.Entity.CreadoPor = userName;
                         entry.Entity.FechaCreacion = utcNow;
-
-                        break;
+                         break;
                     case EntityState.Modified:
                         entry.Entity.ActualizadoPor = userName;
                         entry.Entity.FechaActualizacion = utcNow;
-
+                  
                         break;
                     case EntityState.Deleted:
                         //
