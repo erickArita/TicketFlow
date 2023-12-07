@@ -52,7 +52,7 @@ public class PrioridadService : IPrioridadService
     }
     
     //metodo para actualizar una prioridad
-    public async Task UpdateAsync(UpdatePrioridadRequest updatePrioridadRequest, Guid id)
+    public async Task<PrioridadResponse> UpdateAsync(UpdatePrioridadRequest updatePrioridadRequest, Guid id)
     {
         var prioridadEntity = await _context.Prioridades.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -63,6 +63,8 @@ public class PrioridadService : IPrioridadService
 
         _mapper.Map(updatePrioridadRequest, prioridadEntity);
         await _context.SaveChangesAsync();
+
+        return _mapper.Map<PrioridadResponse>(prioridadEntity);
     }
     
     //metodo para eliminar una prioridad
