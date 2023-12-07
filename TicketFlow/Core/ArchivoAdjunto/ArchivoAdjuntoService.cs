@@ -45,7 +45,7 @@ public class ArchivoAdjuntoService : IArchivoAdjuntoService
     {
         if (files is null || files.Count == 0)
         {
-            throw new ArgumentNullException("Se debe enviar al menos un archivo");
+            throw new TicketFlowException("Se debe enviar al menos un archivo");
         }
         
         var archivosAdjuntos = new List<ArchivoAdjuntoResponse>();
