@@ -37,10 +37,10 @@ public class TicketsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<AplicationResponse<TicketWithResponses>>> Get(Guid id)
+    public async Task<ActionResult<AplicationResponse<TicketWithHistoryResponse>>> Get(Guid id)
     {
         var ticket = await _ticketService.GetByIdAsync(id);
-        return Ok(new AplicationResponse<TicketWithResponses>
+        return Ok(new AplicationResponse<TicketWithHistoryResponse>
         {
             Data = ticket,
         });

@@ -4,6 +4,7 @@ using TicketFlow.Core.Customer.Dtos;
 using TicketFlow.Core.Estado.Dtos;
 using TicketFlow.Core.Prioridad.Dtos;
 using TicketFlow.Core.Ticket.Dtos;
+using TicketFlow.Core.TicketHistory.Dtos;
 using TicketFlow.Entities;
 
 namespace TicketFlow.Common.Maps;
@@ -90,6 +91,11 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(ticket => ticket.Usuario.Id))
             .ForMember(ticketResponse => ticketResponse.EstadoDescripcion,
                 opt => opt.MapFrom(ticket => ticket.Estado.Descripcion));
+
+        CreateMap<Ticket, TicketWithHistoryResponse>();
+        CreateMap<TiketsHistory, TicketHistoryResponse>().ForMember(
+            ticketHistoryResponse => ticketHistoryResponse.UsuarioNombre,
+            opt => opt.MapFrom(ticketHistory => ticketHistory.Usuario.UserName));
     }
 
     private void ResponseMaps()

@@ -60,7 +60,7 @@ public class TicketService : ITicketService
         return ticketResponses;
     }
 
-    public async Task<TicketWithResponses> GetByIdAsync(Guid? id)
+    public async Task<TicketWithHistoryResponse> GetByIdAsync(Guid? id)
     {
         if (id is null)
         {
@@ -72,6 +72,7 @@ public class TicketService : ITicketService
             .Include(ticket => ticket.Prioridad)
             .Include(ticket => ticket.Usuario)
             .Include(ticket => ticket.Estado)
+            .Include(p => p.TiketsHistories)
             .Include(p => p.ArchivosTickets)
             .ThenInclude(p => p.ArchivoAdjunto)
             .FirstOrDefaultAsync(ticket => ticket.Id == id);
@@ -81,7 +82,7 @@ public class TicketService : ITicketService
             throw new NotFoundException($"Ticket con id {id} no existe  😪");
         }
 
-        var ticketResponse = _mapper.Map<TicketWithResponses>(ticket);
+        var ticketResponse = _mapper.Map<TicketWithHistoryResponse>(ticket);
 
         // Cargar respuestas planas sin relaciones anidadas
         var respuestasDb = await _dbContext.Respuestas
@@ -165,10 +166,10 @@ public class TicketService : ITicketService
             .FirstOrDefaultAsync(ticket => ticket.Id == id);
 
         if (ticket is null) throw new NotFoundException($"Ticket con id {id} no existe 😪");
-        //validamos las mismas relaciones de la creacion y una mas que es el estado
-        await ticket.ValidateUpdateAsync(_dbContext);
 
         _mapper.Map(ticketUpdateDto, ticket);
+        //validamos las mismas relaciones de la creacion y una mas que es el estado
+        await ticket.ValidateUpdateAsync(_dbContext);
 
         await _dbContext.SaveChangesAsync();
 

@@ -6,7 +6,7 @@ namespace TicketFlow.Core.Ticket;
 public interface ITicketService
 {
     public Task<IReadOnlyCollection<TicketResponse>> GetAllAsync();
-    public Task<TicketWithResponses> GetByIdAsync(Guid? id);
+    public Task<TicketWithHistoryResponse> GetByIdAsync(Guid? id);
     public Task<TicketResponse> AddAsync(CreateTicketRequest ticketCreationDto);
     public Task<TicketResponse> UpdateAsync(Guid id, UpdateTicketRequest ticketUpdateDto);
     public Task DeleteAsync(Guid id);
