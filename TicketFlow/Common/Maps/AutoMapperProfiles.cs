@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using TicketFlow.Controllers;
+using TicketFlow.Core.ArchivoAdjunto.Dtos;
 using TicketFlow.Core.Customer.Dtos;
 using TicketFlow.Core.Estado.Dtos;
 using TicketFlow.Core.Prioridad.Dtos;
 using TicketFlow.Core.Ticket.Dtos;
+using TicketFlow.Core.TicketHistory.Dtos;
 using TicketFlow.Entities;
 
 namespace TicketFlow.Common.Maps;
@@ -51,10 +53,12 @@ public class AutoMapperProfiles : Profile
             .ForMember(ticket => ticket.UsuarioId,
                 opt => opt.MapFrom(ticketCreationDto => ticketCreationDto.UsuarioAsignadoId))
             .ForMember(opt => opt.ArchivosTickets,
-                opt => opt.MapFrom(ticketCreationDto => ticketCreationDto.ArchivosIds.Select(id => new ArchivoTicket
+                opt => opt.MapFrom(ticketCreationDto => ticketCreationDto.ArchivosTickets.Select(id => new ArchivoTicket
                 {
                     ArchivoAdjuntoId = id,
                 })));
+        CreateMap<ArchivoAdjunto, ArchivoTicketResponse>().ForMember(r => r.Link,
+            opt => opt.MapFrom(r => r.ObjectId));
 
 
         CreateMap<Ticket, TicketResponse>()
@@ -70,12 +74,16 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(ticket => ticket.Estado.Descripcion))
             .ForMember(ticketResponse => ticketResponse.ArchivosTickets,
                 opt => opt.MapFrom(ticket => ticket.ArchivosTickets))
-            .ForMember(ticketResponse => ticketResponse.ArchivosTickets,
-                opt => opt.MapFrom(ticket => ticket.ArchivosTickets))
             ;
 
 
-        CreateMap<UpdateTicketRequest, Ticket>();
+        CreateMap<UpdateTicketRequest, Ticket>()
+            .ForMember(r => r.ArchivosTickets,
+                opt => opt.MapFrom((r, f) => r.ArchivosTickets?.Select(id => new ArchivoTicket
+                {
+                    ArchivoAdjuntoId = id,
+                    TicketId = f.Id,
+                })));
         CreateMap<Ticket, TicketWithResponses>()
             .ForMember(des => des.Respuestas, opt => opt.MapFrom(c => c.Respuestas));
 
@@ -90,11 +98,21 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(ticket => ticket.Usuario.Id))
             .ForMember(ticketResponse => ticketResponse.EstadoDescripcion,
                 opt => opt.MapFrom(ticket => ticket.Estado.Descripcion));
+
+        CreateMap<Ticket, TicketWithHistoryResponse>();
+        CreateMap<TiketsHistory, TicketHistoryResponse>().ForMember(
+            ticketHistoryResponse => ticketHistoryResponse.UsuarioNombre,
+            opt => opt.MapFrom(ticketHistory => ticketHistory.Usuario.UserName));
     }
 
     private void ResponseMaps()
     {
-        CreateMap<CreateResponseRequest, Respuesta>();
+        CreateMap<CreateResponseRequest, Respuesta>()
+            .ForMember(r => r.ArchivoRespuestas, opt => opt.MapFrom((r, f) => r.FilesIds.Select(id => new ArchivoRespuesta
+            {
+                ArchivoAdjuntoId = id,
+                RespuestaId = f.Id,
+            })));
         CreateMap<Respuesta, RespuestaResponse>()
             .ForMember(respuestaResponse => respuestaResponse.UsuarioNombre,
                 opt => opt.MapFrom(respuesta => respuesta.Usuario.UserName))
@@ -120,5 +138,13 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(ticket => ticket.Usuario.Id))
             .ForMember(ticketResponse => ticketResponse.EstadoDescripcion,
                 opt => opt.MapFrom(ticket => ticket.Estado.Descripcion));
+        CreateMap<ArchivoRespuesta, ArchivoTicketResponse>().ForMember(
+            archivoRespuestaResponse => archivoRespuestaResponse.Link,
+            opt => opt.MapFrom(archivoRespuesta => archivoRespuesta.ArchivoAdjunto.ObjectId
+            ))
+            .ForMember(
+                archivoRespuestaResponse => archivoRespuestaResponse.Id,
+                opt => opt.MapFrom(archivoRespuesta => archivoRespuesta.ArchivoAdjunto.Id
+                ));
     }
 }

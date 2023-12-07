@@ -5,5 +5,5 @@ namespace TicketFlow.Core.ArchivoAdjunto;
 public interface IArchivoAdjuntoService
 {
     Task<ArchivoAdjuntoResponse> GuardarArchivo(CreateArchivoAdjunto files);
-    Task<ICollection<ArchivoAdjuntoResponse>> GuardarArchivos(ICollection<CreateArchivoAdjunto> files);
+    Task<ICollection<ArchivoAdjuntoResponse>> GuardarArchivos(ICollection<IFormFile> files);
 }

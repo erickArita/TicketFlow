@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TicketFlow.Common.Exceptions;
+using TicketFlow.Core.Respuestas.Extensions;
 using TicketFlow.Core.Ticket;
 using TicketFlow.Core.Ticket.Dtos;
 using TicketFlow.Core.TicketHistory;
 using TicketFlow.Core.User;
 using TicketFlow.DB.Contexts;
 using TicketFlow.Entities;
+using TicketFlow.Services.GCS.Interfaces;
 
 namespace TicketFlow.Core.Respuestas;
 
@@ -17,18 +19,21 @@ public class RespuestasService : IRespuestasService
     private readonly IMapper _mapper;
     private readonly ITicketService _ticketService;
     private readonly ITicketHistoryService _ticketHistoryService;
+    private readonly ISigningService _signingService;
 
     public RespuestasService(IUserService userService,
         ApplicationDbContext dbContext,
         IMapper mapper,
         ITicketService ticketService,
-        ITicketHistoryService ticketHistoryService)
+        ITicketHistoryService ticketHistoryService,
+        ISigningService signingService)
     {
         _userService = userService;
         _dbContext = dbContext;
         _mapper = mapper;
         _ticketService = ticketService;
         _ticketHistoryService = ticketHistoryService;
+        _signingService = signingService;
     }
 
     public async Task<RespuestaResponse> AddResponseAsync(CreateResponseRequest respuestaCreationDto)
@@ -58,8 +63,9 @@ public class RespuestasService : IRespuestasService
         await _dbContext.SaveChangesAsync();
 
         await _ticketHistoryService.AddTicketHistoryAsync($"Se actualizo una respuesta del ticket", respuesta.TicketId);
-
-        return _mapper.Map<RespuestaResponse>(respuesta);
+        var respuestaResponse = _mapper.Map<RespuestaResponse>(respuesta);
+        await respuestaResponse.SignFiles(_signingService);
+        return respuestaResponse;
     }
 
     private async Task<RespuestaResponse> AsignarRespuestaHija(CreateResponseRequest respuestaCreationDto)
@@ -85,7 +91,7 @@ public class RespuestasService : IRespuestasService
         await _ticketHistoryService.AddTicketHistoryAsync($"Se agrego una respuesta al ticket", respuesta.TicketId);
 
         var respuestaResponse = _mapper.Map<RespuestaResponse>(entity.Entity);
-
+        await respuestaResponse.SignFiles(_signingService);
         respuestaResponse.modificado = respuestaResponse.FechaModificacion.HasValue;
 
         return respuestaResponse;
@@ -98,10 +104,12 @@ public class RespuestasService : IRespuestasService
         var user = await _userService.GetUserInSessionAsync();
 
         if (ticket is null) throw new NotFoundException($"Ticket con id {ticket.Id} no existe 😪");
-
-        var respuesta = _mapper.Map<Respuesta>(respuestaCreationDto);
-
+        
+        var respuesta = new Respuesta();
         respuesta.Id = Guid.NewGuid();
+        await ValidarExistenArchivos(respuestaCreationDto.FilesIds);
+        respuesta = _mapper.Map<Respuesta>(respuestaCreationDto);
+        
         respuesta.UsuarioId = user.Id;
         respuesta.TicketId = ticket.Id;
 
@@ -111,9 +119,21 @@ public class RespuestasService : IRespuestasService
         await _ticketHistoryService.AddTicketHistoryAsync($"Se agrego una respuesta al ticket", ticket.Id);
 
         var respuestaResponse = _mapper.Map<RespuestaResponse>(entity.Entity);
-
+        await respuestaResponse.SignFiles(_signingService);
         respuestaResponse.modificado = respuestaResponse.FechaModificacion.HasValue;
 
         return respuestaResponse;
+    }
+
+    private async Task ValidarExistenArchivos(List<Guid>? filesIds)
+    {
+        if (filesIds is null) return;
+
+        var archivos = await _dbContext.ArchivosAdjuntos.Where(archivo => filesIds.Contains(archivo.Id)).ToListAsync();
+
+        if (archivos.Count != filesIds.Count)
+        {
+            throw new NotFoundException($"Uno o varios archivos no existen 😪");
+        }
     }
 }

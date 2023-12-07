@@ -37,10 +37,10 @@ public class TicketsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<AplicationResponse<TicketWithResponses>>> Get(Guid id)
+    public async Task<ActionResult<AplicationResponse<TicketWithHistoryResponse>>> Get(Guid id)
     {
         var ticket = await _ticketService.GetByIdAsync(id);
-        return Ok(new AplicationResponse<TicketWithResponses>
+        return Ok(new AplicationResponse<TicketWithHistoryResponse>
         {
             Data = ticket,
         });
@@ -85,9 +85,9 @@ public class TicketsController : ControllerBase
     }
 
     /// <summary>
-    ///     Reemplaza al usuaruio encargado del ticket, solo para el rol de admin
+    ///     Reemplaza al usuario encargado del ticket, solo para el rol de admin
     /// </summary>
-    [HttpPost("{ticketId}/users/{userId}")]
+    [HttpPut("{ticketId}/users/{userId}")]
     [Authorize(Roles = nameof(Roles.Admin))]
     public async Task<ActionResult<AplicationResponse<TicketResponse>>> AddUser2Ticket(Guid ticketId, Guid userId)
     {

@@ -19,6 +19,11 @@ public class ArchivoAdjuntoService : IArchivoAdjuntoService
 
     public async Task<ArchivoAdjuntoResponse> GuardarArchivo(CreateArchivoAdjunto contenido)
     {
+        if (contenido is null)
+        {
+            throw new ArgumentNullException("Se debe enviar un archivo");
+        }
+        
         var objectName = await _fileService.GuardarArchivo(contenido.Archivo, "archivos");
         var archivoAdjunto = new Entities.ArchivoAdjunto()
         {
@@ -35,12 +40,17 @@ public class ArchivoAdjuntoService : IArchivoAdjuntoService
         return new ArchivoAdjuntoResponse(archivoAdjunto.Id, link);
     }
 
-    public async Task<ICollection<ArchivoAdjuntoResponse>> GuardarArchivos(ICollection<CreateArchivoAdjunto> files)
+    public async Task<ICollection<ArchivoAdjuntoResponse>> GuardarArchivos(ICollection<IFormFile> files)
     {
+        if (files is null || files.Count == 0)
+        {
+            throw new ArgumentNullException("Se debe enviar al menos un archivo");
+        }
+        
         var archivosAdjuntos = new List<ArchivoAdjuntoResponse>();
         foreach (var file in files)
         {
-            var archivoAdjunto = await GuardarArchivo(file);
+            var archivoAdjunto = await GuardarArchivo(new CreateArchivoAdjunto(file));
             archivosAdjuntos.Add(archivoAdjunto);
         }
 
