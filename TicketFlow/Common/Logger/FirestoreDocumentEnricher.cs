@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using Serilog.Core;
 using Serilog.Events;
 using TicketFlow.Services.GCS.Dtos;
@@ -16,7 +17,13 @@ public class FirestoreDocumentEnricher : ILogEventSink
     {
         var gcpConfig = configuration.GetSection("GCPConfig").Get<GCPConfig>() ??
                         throw new ArgumentNullException(nameof(configuration));
-        _firestoreDb = FirestoreDb.Create(gcpConfig.ProjectId);
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "Services/GCS/Credentials/ClientCredentials.json");
+
+        var client = new FirestoreClientBuilder
+        {
+            CredentialsPath = path
+        }.Build();
+        _firestoreDb = FirestoreDb.Create(gcpConfig.ProjectId, client);
     }
 
 
@@ -50,7 +57,7 @@ public class FirestoreDocumentEnricher : ILogEventSink
         var logMessage = logEvent.RenderMessage();
         var exception = logEvent.Exception;
         var state = logEvent.Properties;
-         var logState = logEvent.Properties.TryGetValue("logState", out var test) ? test : null;
+        var logState = logEvent.Properties.TryGetValue("logState", out var test) ? test : null;
 
         var isJsonString = logMessage.StartsWith("{") && logMessage.EndsWith("}");
         AllData allData = new();
@@ -59,8 +66,8 @@ public class FirestoreDocumentEnricher : ILogEventSink
             var logDataParced = (LogState)JsonSerializer.Deserialize<LogState>(logMessage);
             var stringBefore = logDataParced.Before?.ToString();
             var stringAfter = logDataParced.After?.ToString();
-            
-            var bewforeIfUpdate = stringBefore==stringAfter ? "" : stringBefore;
+
+            var bewforeIfUpdate = stringBefore == stringAfter ? "" : stringBefore;
             allData = new AllData
             {
                 OperationType = logDataParced.OperationType,
@@ -83,7 +90,7 @@ public class FirestoreDocumentEnricher : ILogEventSink
                 Level = level.ToString(),
                 Message = logMessage,
                 exception = exception?.ToString(),
-                Title = logMessage.Contains("---") ? logMessage : "" 
+                Title = logMessage.Contains("---") ? logMessage : ""
             };
         }
 
